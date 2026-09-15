@@ -82,3 +82,23 @@ the test files only.
 
 CI checks out this repository beside each consumer, so a runner is laid out the
 way a real machine is and exercises the same resolution an operator gets.
+
+## What CI runs, and against which revision
+
+| Repository | On push | Weekly |
+|---|---|---|
+| `dotfiles-shared` | lint this tree, CONTRACT agreement, both consumers' full gates | the same |
+| `agentbot` | full gate on Python 3.10 | 3.10 and 3.12, plus the live GitHub descriptor gate |
+| `dotfiles` | full gate | the same, plus a fresh-machine bootstrap |
+
+**Every job resolves `main`, not the pinned revision.** A consumer's CI clones
+this repository's `main`, and this repository's CI clones each consumer's
+`main`. That is deliberate: drift shows up on the next push rather than when
+somebody happens to bump a submodule pin.
+
+It has a consequence worth knowing. A push here can turn a consumer red without
+that consumer changing, and the failure appears on both. That is the intended
+signal — the pairing broke, and the pairing is what `CONTRACT` describes — but
+it means a red consumer is not always the consumer's fault.
+
+The workspace repository pins exact revisions; CI does not use them.

@@ -8,6 +8,12 @@ name: Validate
 on:
   push:
   workflow_dispatch:
+  # Weekly, because the things that break this workspace without anyone
+  # touching it are upstream: the runner image, apt, and the versions of
+  # shellcheck, shfmt and ruff it ships. A Monday failure is a known
+  # environment change; the same failure found mid-task is a mystery.
+  schedule:
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
@@ -47,6 +53,29 @@ jobs:
           ruff format --check scripts tests
       - name: Whitespace errors
         run: git diff --check
+
+  contract:
+    name: CONTRACT agreement
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: dotfiles-shared
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: PamuduW/dotfiles
+          path: dotfiles
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: PamuduW/agentbot
+          path: agentbot
+      # Agentbot's own check compares its two resolvers to each other. This is
+      # the only place all four declarations are in one checkout at once.
+      - name: Every declaration agrees
+        run: |
+          bash dotfiles-shared/scripts/check_contract_agreement.sh \
+            dotfiles-shared dotfiles agentbot
 
   consumers:
     name: ${{ matrix.consumer }} against this checkout
