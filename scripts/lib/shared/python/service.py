@@ -102,7 +102,7 @@ def serve() -> int:
                 _repo_status(args)
             elif verb == "ping":
                 print("ok")
-        except Exception:  # noqa: BLE001 -- the caller's fallback is the handler
+        except Exception:  # The caller's fallback is the handler.
             pass
         print(END, flush=True)
 

@@ -64,9 +64,7 @@ def classify(*, upstream: str, fetched: bool, ahead: int, behind: int, asked: bo
     return f"{upstream}: up to date{suffix}|ok"
 
 
-def check(
-    repo: Path, *, timeout: float = DEFAULT_TIMEOUT_SECONDS, fetch: bool = False
-) -> str:
+def check(repo: Path, *, timeout: float = DEFAULT_TIMEOUT_SECONDS, fetch: bool = False) -> str:
     """`detail|result` for a checkout on disk.
 
     Local by default. `dotfiles status` is contractually strictly local -- it
@@ -78,8 +76,9 @@ def check(
     if not (repo / ".git").exists():
         return "not a Git checkout|skipped"
 
-    rc, upstream = _git(repo, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}",
-                        timeout=timeout)
+    rc, upstream = _git(
+        repo, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}", timeout=timeout
+    )
     if rc != 0 or not upstream:
         return classify(upstream="", fetched=False, ahead=0, behind=0)
 
@@ -88,8 +87,9 @@ def check(
         fetch_rc, _ = _git(repo, "fetch", "--quiet", "--prune", timeout=timeout)
         fetched = fetch_rc == 0
 
-    counts_rc, counts = _git(repo, "rev-list", "--left-right", "--count", "HEAD...@{upstream}",
-                             timeout=timeout)
+    counts_rc, counts = _git(
+        repo, "rev-list", "--left-right", "--count", "HEAD...@{upstream}", timeout=timeout
+    )
     ahead = behind = 0
     if counts_rc == 0 and counts:
         parts = counts.split()
@@ -99,9 +99,7 @@ def check(
         # Fetched fine but the count failed, so the answer is not known.
         fetched = False
 
-    return classify(
-        upstream=upstream, fetched=fetched, ahead=ahead, behind=behind, asked=fetch
-    )
+    return classify(upstream=upstream, fetched=fetched, ahead=ahead, behind=behind, asked=fetch)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -113,9 +111,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--label", default="Repository")
     parser.add_argument("--fetch", action="store_true")
     args = parser.parse_args(argv)
-    print(
-        f"{args.label}|{check(Path(args.repo), timeout=args.timeout, fetch=args.fetch)}"
-    )
+    print(f"{args.label}|{check(Path(args.repo), timeout=args.timeout, fetch=args.fetch)}")
     return 0
 
 

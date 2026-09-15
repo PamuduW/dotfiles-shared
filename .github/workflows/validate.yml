@@ -1,0 +1,87 @@
+name: Validate
+
+# This repository has no suite of its own -- its code runs inside two products,
+# and those products' suites are its tests. So CI does two things: lint what is
+# here, then run both consumers against this checkout. A change here that breaks
+# either product fails on this repository, where it was made, rather than on
+# whichever consumer next happened to run.
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint this tree
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.10"
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install 'ruff>=0.12,<1'
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck shfmt
+      # Until this repository existed, the shell here was linted by whichever
+      # consumer vendored it and the Python was linted by neither. Both are
+      # linted here now, against the same rule selection Agentbot applies.
+      - name: Bash syntax
+        run: find scripts tests -name '*.sh' -exec bash -n {} +
+      - name: ShellCheck
+        run: shellcheck -x -e SC1091,SC2178,SC2313 $(find scripts tests -name '*.sh')
+      - name: Formatting
+        run: shfmt -d $(find scripts tests -name '*.sh')
+      - name: Ruff
+        run: |
+          ruff check scripts tests
+          ruff format --check scripts tests
+      - name: Whitespace errors
+        run: git diff --check
+
+  consumers:
+    name: ${{ matrix.consumer }} against this checkout
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - consumer: agentbot
+            gate: bash tests/run.sh
+          - consumer: dotfiles
+            gate: bash scripts/validate.sh
+    steps:
+      # Laid out the way a real machine is: the shared checkout is a sibling of
+      # the product, which is what the resolvers look for.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: dotfiles-shared
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: PamuduW/${{ matrix.consumer }}
+          path: ${{ matrix.consumer }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.10"
+      - name: Install tooling
+        working-directory: ${{ matrix.consumer }}
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt -r requirements-dev.txt
+          fi
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck shfmt ripgrep
+      - name: Run the consumer's gate
+        working-directory: ${{ matrix.consumer }}
+        run: ${{ matrix.gate }}

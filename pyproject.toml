@@ -1,0 +1,25 @@
+# This repository ships no package. The file exists so the Python here is held
+# to the same standard as the Agentbot code that imports it -- the selection
+# below mirrors agentbot/pyproject.toml. Two copies of a rule list is the one
+# thing that cannot live here, because a consumer cannot configure its linter
+# from a checkout it has not resolved yet.
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP", "C4", "RUF", "C901", "PLR0912", "PLR0915"]
+# The breadcrumb separator "›" is deliberate and asserted by the TUI tests.
+ignore = ["RUF001"]
+
+# A ratchet, like Agentbot's, but set to this repository's own worst function
+# rather than copied from it: 16, in the report renderer. Shared code is loaded
+# by both products, so it should stay the simplest code in the workspace, and
+# borrowing a consumer's looser limit would have quietly allowed that to slip.
+[tool.ruff.lint.mccabe]
+max-complexity = 16
+
+[tool.ruff.lint.pylint]
+max-branches = 17
+max-statements = 75

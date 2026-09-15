@@ -71,7 +71,7 @@ def fit_detail(text: str, max_len: int, home: str) -> str:
 def format_header(widths: TableWidths, headers: tuple[str, str, str]) -> tuple[str, str]:
     """The column line and the rule beneath it, uncoloured."""
     label_width, detail_width, result_width = widths
-    h0, h1, h2 = (fit_line(h, w) for h, w in zip(headers, widths))
+    h0, h1, h2 = (fit_line(h, w) for h, w in zip(headers, widths, strict=True))
     columns = f"  {h0:<{label_width}} | {h1:<{detail_width}} | {h2:<{result_width}}"
     rule = f"  {'-' * label_width}-+-{'-' * detail_width}-+-{'-' * result_width}"
     return columns, rule
@@ -104,10 +104,12 @@ def format_four_column_header(
 ) -> tuple[str, str]:
     """Column line and rule, indented like the three-column table: every line
     the run prints shares one left edge."""
-    cells = "  " + " | ".join(f"{fit_line(h, w):<{w}}" for h, w in zip(headers, widths))
+    cells = "  " + " | ".join(
+        f"{fit_line(h, w):<{w}}" for h, w in zip(headers, widths, strict=True)
+    )
     rule = "  " + "-+-".join("-" * w for w in widths)
     return cells, rule
 
 
 def format_four_column_row(widths: FourWidths, cells: tuple[str, str, str, str]) -> str:
-    return "  " + " | ".join(f"{fit_line(c, w):<{w}}" for c, w in zip(cells, widths))
+    return "  " + " | ".join(f"{fit_line(c, w):<{w}}" for c, w in zip(cells, widths, strict=True))

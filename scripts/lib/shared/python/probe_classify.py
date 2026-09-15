@@ -68,9 +68,7 @@ def missing_package_count(entries: list[str], installed: set[str]) -> int:
     return max(0, len(entries) - present)
 
 
-def package_gaps(
-    entries: list[str], installed: set[str], available: set[str]
-) -> tuple[int, int]:
+def package_gaps(entries: list[str], installed: set[str], available: set[str]) -> tuple[int, int]:
     """(missing, unavailable) for entries with no installed alternative.
 
     The two are different problems and only one of them is the operator's. A
@@ -180,17 +178,12 @@ def go(
     return "missing|working Go installation not found"
 
 
-def git_credential(
-    *, helper: str, recurse: str, fetch: str, push: str, summary: str
-) -> str:
+def git_credential(*, helper: str, recurse: str, fetch: str, push: str, summary: str) -> str:
     """Five inputs, three outcomes. Every submodule default set but no
     credential helper is a different message from a partial configuration, and
     one value of five separates them."""
     defaults_set = (
-        recurse == "true"
-        and fetch == "on-demand"
-        and push == "check"
-        and summary == "true"
+        recurse == "true" and fetch == "on-demand" and push == "check" and summary == "true"
     )
     if defaults_set and helper:
         return "configured|credential helper + recursive submodule defaults"
@@ -304,9 +297,7 @@ def classify(fields: list[str]) -> str:
         )
     if name == "portainer":
         docker_present, rc, container = args
-        return portainer(
-            docker_present=docker_present == "1", rc=int(rc or 0), name=container
-        )
+        return portainer(docker_present=docker_present == "1", rc=int(rc or 0), name=container)
     if name == "codex_cli":
         state, path, ver, rc = args
         return codex_cli(state=state, path=path, version=ver, rc=int(rc or 0))
@@ -328,8 +319,9 @@ def classify(fields: list[str]) -> str:
         if queried != "1":
             return "check|package state unknown (dpkg-query timed out)"
         rest = args[6:]
-        count, installed_end = int(entry_count or 0), int(entry_count or 0) + int(
-            installed_count or 0
+        count, installed_end = (
+            int(entry_count or 0),
+            int(entry_count or 0) + int(installed_count or 0),
         )
         entries = [entry for entry in rest[:count] if entry]
         installed = {name for name in rest[count:installed_end] if name}
@@ -399,10 +391,7 @@ def main(argv: list[str] | None = None) -> int:
     import sys
 
     for line in sys.stdin:
-        fields = [
-            field.replace(NEWLINE_SUB, "\n")
-            for field in line.rstrip("\n").split(FIELD_SEP)
-        ]
+        fields = [field.replace(NEWLINE_SUB, "\n") for field in line.rstrip("\n").split(FIELD_SEP)]
         print(classify(fields))
     return 0
 

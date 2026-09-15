@@ -36,13 +36,28 @@ CYAN = "\033[36m"
 # drifted to include `unchanged`, `ready` and `stale`; those are folded in here
 # rather than left to a fourth divergence.
 _GREEN = {
-    "ok", "installed", "configured", "linked", "up to date", "current",
-    "unchanged", "ready", "applied", "read-only",
+    "ok",
+    "installed",
+    "configured",
+    "linked",
+    "up to date",
+    "current",
+    "unchanged",
+    "ready",
+    "applied",
+    "read-only",
 }
 _RED = {"missing", "failed", "error", "conflict"}
 _YELLOW = {
-    "check", "drift", "extra", "warn", "warning", "partial", "stale",
-    "mutating", "applied-with-local-changes",
+    "check",
+    "drift",
+    "extra",
+    "warn",
+    "warning",
+    "partial",
+    "stale",
+    "mutating",
+    "applied-with-local-changes",
 }
 _CYAN = {"info", "dry-run", "preview"}
 
@@ -147,9 +162,7 @@ def main(argv: list[str] | None = None, rows: list[str] | None = None) -> int:
     # its own: its caller owns the heading and the summary sentences, which are
     # phrasing rather than layout.
     parser.add_argument("--four-column", action="store_true")
-    parser.add_argument(
-        "--headers", default="component,installed,available,action"
-    )
+    parser.add_argument("--headers", default="component,installed,available,action")
     args = parser.parse_args(argv)
 
     color = args.color
@@ -164,7 +177,7 @@ def main(argv: list[str] | None = None, rows: list[str] | None = None) -> int:
             line = line.rstrip("\n")
             if not line:
                 continue
-            cells = tuple((line.split("|") + ["", "", "", ""])[:4])
+            cells = tuple([*line.split("|"), "", "", "", ""][:4])
             rendered = layout.format_four_column_row(widths4, cells)
             action_fit = layout.fit_line(cells[3], widths4[3])
             painted = color_action(action_fit, color=color)
@@ -216,9 +229,7 @@ def main(argv: list[str] | None = None, rows: list[str] | None = None) -> int:
         result_fit = layout.fit_line(result, result_width)
         painted = color_result(result_fit, color=color)
         padding = " " * (result_width - len(result_fit))
-        out.append(
-            f"  {label:<{label_width}} | {detail_fit:<{detail_width}} | {painted}{padding}"
-        )
+        out.append(f"  {label:<{label_width}} | {detail_fit:<{detail_width}} | {painted}{padding}")
 
     if args.ok is not None:
         ok = args.ok
@@ -233,14 +244,21 @@ def main(argv: list[str] | None = None, rows: list[str] | None = None) -> int:
             out.append("  " + _paint(f"All {ok} component(s) look good.", GREEN, color=color))
         elif miss == 0:
             out.append(
-                "  " + _paint(f"{ok} ok", GREEN, color=color)
-                + ", " + _paint(f"{check} need attention", YELLOW, color=color) + "."
+                "  "
+                + _paint(f"{ok} ok", GREEN, color=color)
+                + ", "
+                + _paint(f"{check} need attention", YELLOW, color=color)
+                + "."
             )
         else:
             out.append(
-                "  " + _paint(f"{ok} ok", GREEN, color=color)
-                + ", " + _paint(f"{miss} missing", RED, color=color)
-                + ", " + _paint(f"{check} need attention", YELLOW, color=color) + "."
+                "  "
+                + _paint(f"{ok} ok", GREEN, color=color)
+                + ", "
+                + _paint(f"{miss} missing", RED, color=color)
+                + ", "
+                + _paint(f"{check} need attention", YELLOW, color=color)
+                + "."
             )
 
     print("\n".join(out))

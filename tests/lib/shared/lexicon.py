@@ -22,9 +22,26 @@ from pathlib import Path
 #: Anything else capitalised after the first word is Title Case, which this
 #: contract does not use.
 PROPER = {
-    "Agentbot", "Dotfiles", "Graphify", "Boost", "Cursor", "Claude", "Codex",
-    "GitHub", "GitLab", "MCP", "VS", "Code", "WSL", "Python", "Copilot",
-    "Docker", "Portainer", "Go", "Stow", "Lib",
+    "Agentbot",
+    "Dotfiles",
+    "Graphify",
+    "Boost",
+    "Cursor",
+    "Claude",
+    "Codex",
+    "GitHub",
+    "GitLab",
+    "MCP",
+    "VS",
+    "Code",
+    "WSL",
+    "Python",
+    "Copilot",
+    "Docker",
+    "Portainer",
+    "Go",
+    "Stow",
+    "Lib",
 }
 
 #: Spellings the update/upgrade split has already been fixed in. They are
