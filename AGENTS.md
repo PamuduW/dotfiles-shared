@@ -19,8 +19,11 @@ script until that mechanism was retired.
   are pinned by `agentbot/tests/test_renderer_parity.sh` across seven terminal
   widths and by `dotfiles/tests/test_probe_classify_parity.sh`. Change them
   together and run both suites.
-- Raise `CONTRACT` when a change is not backward compatible with a released
-  consumer, and update both consumers in the same batch.
+- Raise `CONTRACT` whenever the pairing changes, including when a consumer
+  starts loading a file added here. That is additive from this side and
+  breaking from theirs: an older checkout does not carry it, and the consumer
+  dies on a bare `No such file` instead of the version mismatch CONTRACT
+  exists to report. Raise it here and in both consumers in the same batch.
 - This code runs during first setup, before either consumer has a Python
   environment. Do not add dependencies beyond Bash and the standard library.
 - Do not add credentials, private paths, or host-specific values. This

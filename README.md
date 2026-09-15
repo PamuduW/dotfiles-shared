@@ -31,12 +31,23 @@ If none resolve, the consumer stops with the clone command rather than a bare
 ## CONTRACT
 
 `CONTRACT` holds a single integer. Each consumer declares the version it
-requires and checks it during preflight. Raise it when a change here is not
-backward compatible with a released consumer, and update both consumers in the
-same batch.
+requires and checks it during preflight. A mismatch is reported with the
+required and found versions, so version skew across the three repositories
+fails loudly instead of drifting.
 
-A mismatch is reported with the required and found versions, so version skew
-across the three repositories fails loudly instead of drifting.
+**Raise it whenever the pairing changes, not only when something here is
+removed or altered.** Adding a file looks additive from this side, but the
+moment a consumer starts loading it, that consumer no longer works against an
+older checkout — and the failure is a bare `No such file` from whichever line
+sourced it, which is exactly what CONTRACT exists to replace.
+
+Raise it here and in both consumers in the same batch:
+
+| Where | What |
+|---|---|
+| `CONTRACT` | the integer itself |
+| `scripts/lib/shared_resolve.sh` | `DOTFILES_SHARED_CONTRACT_REQUIRED`, in both consumers |
+| `agentbot/src/shared_paths.py` | `CONTRACT_REQUIRED` |
 
 ## Changing shared code
 
