@@ -41,7 +41,6 @@ PROPER = {
     "Portainer",
     "Go",
     "Stow",
-    "Lib",
 }
 
 #: Spellings the update/upgrade split has already been fixed in. They are
@@ -49,7 +48,12 @@ PROPER = {
 #: that is not apt's.
 RETIRED = ("Upgrade summary", "Upgrade finished", "verified upgrade", "=== Upgrade ===")
 
-HEADER = re.compile(r"""(?:rt_)?print_header\(?\s*(['"])([^'"]+)\1""")
+# Any header-printing call, not just print_header: a product wrapper named
+# something else -- _package_lib_header, for one -- prints the same surface and
+# was invisible to this check while it matched two spellings. Calls whose first
+# argument is built at runtime are skipped below, which is what keeps the
+# four-column header helpers (whose first argument is a width) out of it.
+HEADER = re.compile(r"""[A-Za-z_][A-Za-z0-9_]*_header\(?\s*(['"])([^'"]+)\1""")
 
 
 def _files(root: Path, globs: list[str]):
