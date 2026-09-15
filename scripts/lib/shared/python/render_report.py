@@ -31,52 +31,96 @@ CYAN = "\033[36m"
 
 # Mirrors status_color_result in ../tui/colors.sh. Both are pinned against each
 # other by agentbot/tests/test_renderer_parity.sh.
-_GREEN = {"ok", "installed", "configured", "linked", "up to date", "current", "applied", "read-only"}
+#
+# This is the one result vocabulary. Agentbot kept a third copy of it, which had
+# drifted to include `unchanged`, `ready` and `stale`; those are folded in here
+# rather than left to a fourth divergence.
+_GREEN = {
+    "ok", "installed", "configured", "linked", "up to date", "current",
+    "unchanged", "ready", "applied", "read-only",
+}
 _RED = {"missing", "failed", "error", "conflict"}
 _YELLOW = {
-    "check", "drift", "extra", "warn", "warning", "partial",
+    "check", "drift", "extra", "warn", "warning", "partial", "stale",
     "mutating", "applied-with-local-changes",
 }
 _CYAN = {"info", "dry-run", "preview"}
+
+#: The class a result word belongs to, keyed by the colour it earns.
+_RESULT_CLASSES = (("ok", _GREEN), ("missing", _RED), ("check", _YELLOW), ("info", _CYAN))
+
+
+def result_class(result: str) -> str:
+    """Which of the five classes a result word belongs to.
+
+    `unknown` is its own answer rather than a silent fallback: Agentbot's
+    tests/test_report_contract.sh sweeps every surface for it, so a surface
+    inventing a word is caught there instead of on the operator's screen.
+    """
+    key = result.strip().lower()
+    # Dim, not yellow: a skip is a deliberate non-event -- "nothing declared",
+    # "host unavailable" -- and should recede rather than demand attention the
+    # way a warning does.
+    if key.startswith("skipped"):
+        return "skipped"
+    for name, names in _RESULT_CLASSES:
+        if key in names:
+            return name
+    return "unknown"
+
+
+_RESULT_COLORS = {"ok": GREEN, "missing": RED, "skipped": DIM, "check": YELLOW, "info": CYAN}
 
 
 def color_result(result: str, *, color: bool) -> str:
     if not color:
         return result
-    key = result.strip().lower()
-    if key.startswith("skipped"):
-        return f"{DIM}{result}{RESET}"
-    for names, code in ((_GREEN, GREEN), (_RED, RED), (_YELLOW, YELLOW), (_CYAN, CYAN)):
-        if key in names:
-            return f"{code}{result}{RESET}"
-    return result
+    code = _RESULT_COLORS.get(result_class(result))
+    return result if code is None else f"{code}{result}{RESET}"
 
 
 # Mirrors status_color_action in ../tui/colors.sh. A separate vocabulary from
 # the result colours above: this column says what will happen, not what state
 # something is in, so "current" is green here and "check" is yellow.
-_ACTION_GREEN = {"up to date", "skip", "current", "verified current"}
-_ACTION_DIM = {"latest unchecked"}
-_ACTION_YELLOW = {"refresh", "continue", "check", "unchecked"}
-_ACTION_CYAN = {"verified"}
-_ACTION_YELLOW_PREFIX = ("upgrade", "replace")
+# Agentbot's third copy contributed `none`, `reconcile`, `configure`, `install`,
+# `apply` and `merge`, and matched `latest ` and `refresh` as prefixes where
+# this side matched them whole. The prefixes are the wider rule and subsume the
+# exact spellings, so they win.
+_ACTION_GREEN = {"up to date", "skip", "current", "verified current", "none"}
+_ACTION_YELLOW = {"continue", "check", "unchecked", "reconcile", "configure"}
+_ACTION_CYAN = {"verified", "install", "apply", "merge"}
+_ACTION_DIM_PREFIX = ("latest ",)
+_ACTION_YELLOW_PREFIX = ("upgrade", "replace", "refresh")
 _ACTION_CYAN_PREFIX = ("pull",)
+
+
+def action_class(action: str) -> str:
+    """Which colour class an action word earns, or `unknown`.
+
+    Checked whole before prefix, so `verified current` stays green rather than
+    being caught by the `verified` in the cyan set.
+    """
+    if action in _ACTION_GREEN:
+        return "ok"
+    if action.startswith(_ACTION_DIM_PREFIX):
+        return "skipped"
+    if action in _ACTION_CYAN or action.startswith(_ACTION_CYAN_PREFIX):
+        return "info"
+    if action in _ACTION_YELLOW or action.startswith(_ACTION_YELLOW_PREFIX):
+        return "check"
+    if action == "blocked":
+        return "missing"
+    return "unknown"
+
+
+_ACTION_COLORS = {"ok": GREEN, "skipped": DIM, "info": CYAN, "check": YELLOW, "missing": RED}
 
 
 def color_action(action: str, *, color: bool) -> str:
     if not color:
         return action
-    if action in _ACTION_GREEN:
-        return f"{GREEN}{action}{RESET}"
-    if action in _ACTION_DIM:
-        return f"{DIM}{action}{RESET}"
-    if action.startswith(_ACTION_YELLOW_PREFIX) or action in _ACTION_YELLOW:
-        return f"{YELLOW}{action}{RESET}"
-    if action.startswith(_ACTION_CYAN_PREFIX) or action in _ACTION_CYAN:
-        return f"{CYAN}{action}{RESET}"
-    if action == "blocked":
-        return f"{RED}{action}{RESET}"
-    return action
+    code = _ACTION_COLORS.get(action_class(action))
+    return action if code is None else f"{code}{action}{RESET}"
 
 
 def _paint(text: str, code: str, *, color: bool) -> str:
@@ -114,14 +158,14 @@ def main(argv: list[str] | None = None, rows: list[str] | None = None) -> int:
     if args.four_column:
         widths4 = layout.four_column_widths(args.cols)
         headers = tuple(args.headers.split(","))
-        columns, rule = layout.format_four_column_header(widths4, headers)  # type: ignore[arg-type]
+        columns, rule = layout.format_four_column_header(widths4, headers)
         lines = [_paint(columns, BOLD, color=color), _paint(rule, DIM, color=color)]
         for line in source:
             line = line.rstrip("\n")
             if not line:
                 continue
             cells = tuple((line.split("|") + ["", "", "", ""])[:4])
-            rendered = layout.format_four_column_row(widths4, cells)  # type: ignore[arg-type]
+            rendered = layout.format_four_column_row(widths4, cells)
             action_fit = layout.fit_line(cells[3], widths4[3])
             painted = color_action(action_fit, color=color)
             head = rendered[: len(rendered) - widths4[3]]

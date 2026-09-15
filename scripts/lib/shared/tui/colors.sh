@@ -79,13 +79,13 @@ status_color_result() {
 	# states this case list had never seen, so they fell through uncoloured
 	# there. One design, one mapping: agentbot/tests/test_renderer_parity.sh
 	# compares both renderers across every state listed here.
-	ok | installed | configured | linked | up\ to\ date | current | applied | read-only)
+	ok | installed | configured | linked | up\ to\ date | current | unchanged | ready | applied | read-only)
 		_colors_wrap "${C_GREEN:-}" "$result"
 		;;
 	missing | failed | error | conflict)
 		_colors_wrap "${C_RED:-}" "$result"
 		;;
-	check | drift | extra | warn | warning | partial | mutating | applied-with-local-changes)
+	check | drift | extra | warn | warning | partial | stale | mutating | applied-with-local-changes)
 		_colors_wrap "${C_YELLOW:-}" "$result"
 		;;
 	skipped*)
@@ -104,19 +104,18 @@ status_color_result() {
 status_color_action() {
 	local action="$1"
 	case "$action" in
-	up\ to\ date | skip | current | verified\ current)
+	# Whole words before prefixes, so `verified current` stays green rather
+	# than being caught by the `verified` in the cyan arm below.
+	up\ to\ date | skip | current | verified\ current | none)
 		_colors_wrap "${C_GREEN:-}" "$action"
 		;;
-	latest\ unchecked)
+	latest\ *)
 		_colors_wrap "${C_DIM:-}" "$action"
 		;;
-	upgrade* | refresh | continue | check | replace*)
-		_colors_wrap "${C_YELLOW:-}" "$action"
-		;;
-	pull* | verified)
+	verified | install | apply | merge | pull*)
 		_colors_wrap "${C_CYAN:-}" "$action"
 		;;
-	unchecked)
+	continue | check | unchecked | reconcile | configure | upgrade* | replace* | refresh*)
 		_colors_wrap "${C_YELLOW:-}" "$action"
 		;;
 	blocked)
