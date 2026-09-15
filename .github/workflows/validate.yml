@@ -70,14 +70,19 @@ jobs:
         with:
           repository: PamuduW/${{ matrix.consumer }}
           path: ${{ matrix.consumer }}
+      # Only where the consumer's own workflow does. Dotfiles is a Bash product
+      # whose suite uses the system interpreter; putting a tool-cache Python in
+      # front of it is a difference from its own CI, and its bootstrap suite
+      # failed on exactly that.
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        if: matrix.consumer == 'agentbot'
         with:
           python-version: "3.10"
       - name: Install tooling
         working-directory: ${{ matrix.consumer }}
         run: |
-          python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
             python -m pip install -r requirements.txt -r requirements-dev.txt
           fi
           sudo apt-get update
