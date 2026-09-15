@@ -77,19 +77,6 @@ def format_header(widths: TableWidths, headers: tuple[str, str, str]) -> tuple[s
     return columns, rule
 
 
-def format_row(widths: TableWidths, component: str, detail: str, result: str, home: str) -> str:
-    """One uncoloured row. Every cell is padded, including the last.
-
-    The trailing padding is load-bearing: Dotfiles pins every table line to the
-    terminal width in test_update_and_upgrade_rows_keep_the_last_column_width.
-    """
-    label_width, detail_width, result_width = widths
-    label = fit_line(component, label_width)
-    detail_fit = fit_detail(detail, detail_width, home)
-    result_fit = fit_line(result, result_width)
-    return f"  {label:<{label_width}} | {detail_fit:<{detail_width}} | {result_fit:<{result_width}}"
-
-
 FourWidths = tuple[int, int, int, int]
 
 
