@@ -180,7 +180,9 @@ repo_update_preflight() {
 		_repo_update_result_stop "$result_name" fetch-failed 'Git fetch failed; remote freshness is unknown.'
 		return 0
 	fi
-	[[ -n "$fetch_output" ]] && _repo_update_print_fetch_output "$fetch_output"
+	# Nothing on success. Git's fetch notice says the same thing the report
+	# table below is about to say, in Git's words rather than this run's, and
+	# it arrives before the heading that would have framed it.
 
 	counts="$(git -C "$repo_dir" rev-list --left-right --count 'HEAD...@{upstream}' 2>/dev/null)" || {
 		_repo_update_result_stop "$result_name" invalid 'Could not classify local and upstream history.'
@@ -468,7 +470,16 @@ repo_update_apply() {
 	ahead) result_ref[outcome]=ahead_continue ;;
 	behind)
 		if pull_output="$(git -C "${result_ref[dir]}" pull --ff-only 2>&1)"; then
-			[[ -n "$pull_output" ]] && _repo_update_print_fetch_output "$pull_output"
+			# One line, not the diffstat. A fast-forward printed every path it
+			# touched -- seventeen files and their create modes on an ordinary
+			# update -- which is Git narrating itself in the middle of a run
+			# that reports through tables.
+			#
+			# Built from the count this run already classified, so the pull
+			# stays the last command the adapter issues and the line does not
+			# depend on how Git words itself under another locale.
+			printf '  %sFast-forward: %s, %s commit(s)%s\n' \
+				"${C_CYAN:-}" "${result_ref[label]}" "${result_ref[behind]:-0}" "${C_RESET:-}"
 			result_ref[outcome]=repository_changed
 		else
 			[[ -n "$pull_output" ]] && _repo_update_print_raw_output "$pull_output" >&2
