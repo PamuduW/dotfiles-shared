@@ -49,6 +49,11 @@ Raise it here and in both consumers in the same batch:
 | `scripts/lib/shared_resolve.sh` | `DOTFILES_SHARED_CONTRACT_REQUIRED`, in both consumers |
 | `agentbot/src/shared_paths.py` | `CONTRACT_REQUIRED` |
 
+## Documentation
+
+[`docs/`](docs/README.md) covers the architecture, why several things exist in
+both Bash and Python, and the full consuming contract.
+
 ## Changing shared code
 
 This repository is canonical. There is no sync step and no vendored second
