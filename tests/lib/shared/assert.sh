@@ -37,32 +37,6 @@ check() {
 	expect_success "$@"
 }
 
-assert_eq() {
-	[[ "$1" == "$2" ]]
-}
-
-assert_contains() {
-	[[ "$1" == *"$2"* ]]
-}
-
-assert_not_contains() {
-	[[ "$1" != *"$2"* ]]
-}
-
-assert_status() {
-	local expected="$1"
-	shift
-	set +e
-	"$@"
-	local actual=$?
-	set -e
-	[[ "$actual" -eq "$expected" ]]
-}
-
-assert_file_contains() {
-	grep -Fq -- "$2" "$1"
-}
-
 finish_tests() {
 	printf '%d test(s) passed; %d failed\n' "$passed" "$failed"
 	((failed == 0))
