@@ -29,7 +29,8 @@ record() {
 }
 
 read -r contract <"$shared_root/CONTRACT" || contract=''
-record "dotfiles-shared/CONTRACT" "${contract//[[:space:]]/}"
+published="${contract//[[:space:]]/}"
+record "dotfiles-shared/CONTRACT" "$published"
 
 for consumer in "$@"; do
 	[[ -d "$consumer" ]] || {
@@ -51,13 +52,21 @@ for consumer in "$@"; do
 	fi
 done
 
-if ((${#seen[@]} > 1)); then
-	printf '\n  Error: the declarations disagree: %s\n' "${!seen[*]}" >&2
-	printf '  Raise CONTRACT here and in every consumer in the same batch.\n' >&2
+# A consumer may require less than this repository publishes -- a checkout
+# ahead of it is a superset. What must never happen is a consumer requiring
+# more than exists here, which is the pairing that cannot resolve.
+too_new=()
+for value in "${!seen[@]}"; do
+	((value > published)) && too_new+=("$value")
+done
+if ((${#too_new[@]} > 0)); then
+	printf '\n  Error: a consumer requires CONTRACT %s, but this repository publishes %s.\n' \
+		"${too_new[*]}" "$published" >&2
+	printf '  Raise CONTRACT here in the same batch as the consumer that needs it.\n' >&2
 	exit 1
 fi
 ((fail == 0)) || {
 	printf '\n  Error: a declaration could not be read.\n' >&2
 	exit 1
 }
-printf '\n  All declarations agree on CONTRACT %s\n' "${!seen[*]}"
+printf '\n  Every consumer is satisfied by CONTRACT %s\n' "$published"

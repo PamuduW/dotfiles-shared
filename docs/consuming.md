@@ -34,8 +34,13 @@ reported the resulting empty read as an unreadable `CONTRACT`.
 ## CONTRACT
 
 `CONTRACT` holds one integer. Each consumer declares the revision it requires
-and asserts it during preflight; a mismatch names both revisions and the pull
-that fixes it.
+and asserts during preflight that this checkout is **at least** that; a shared
+checkout behind a consumer names both revisions and the pull that fixes it.
+
+A shared checkout *ahead* of a consumer is accepted, because a raise means the
+consumer gained a requirement this tree already satisfies. Requiring an exact
+match deadlocked a self-update: a consumer older than the raise could not start,
+so it could never reach the gate that would have updated it.
 
 **Raise it whenever the pairing changes**, not only when something here is
 removed or altered. Adding a file looks additive from this side, but the moment

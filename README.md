@@ -31,9 +31,17 @@ If none resolve, the consumer stops with the clone command rather than a bare
 ## CONTRACT
 
 `CONTRACT` holds a single integer. Each consumer declares the version it
-requires and checks it during preflight. A mismatch is reported with the
-required and found versions, so version skew across the three repositories
-fails loudly instead of drifting.
+requires and checks during preflight that this checkout is **at least** that.
+
+At least, not exactly. A raise means a consumer started needing something this
+tree gained, so a shared checkout *ahead* of a consumer is a superset and is
+accepted. *Behind* is the failing direction: the files that consumer loads are
+not here yet, and it stops with both revisions and the pull that fixes it.
+
+Exact matching deadlocked a self-update. A consumer that predated a raise could
+not start, so it could not run the gate that would have pulled the newer
+consumer — and the error told the operator to pull the shared checkout, which
+was already current.
 
 **Raise it whenever the pairing changes, not only when something here is
 removed or altered.** Adding a file looks additive from this side, but the
