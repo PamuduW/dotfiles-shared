@@ -162,11 +162,16 @@ _github_token_menu_check() {
 	github_token_verify "$token" || rc=$?
 	case "$rc" in
 	0)
-		printf '  %sGitHub accepted it.%s\n\n' \
-			"${C_GREEN:-}" "${C_RESET:-}" >&"$GITHUB_TOKEN_MENU_OUT_FD"
+		printf '  %sGitHub accepted it%s.%s\n\n' \
+			"${C_GREEN:-}" "$(_github_token_menu_scope_note)" "${C_RESET:-}" \
+			>&"$GITHUB_TOKEN_MENU_OUT_FD"
 		;;
 	1)
 		_github_token_menu_say "${C_RED:-}GitHub rejected this token; nothing was saved.${C_RESET:-}"
+		return 1
+		;;
+	3)
+		_github_token_menu_say "${C_RED:-}This token can write (${GITHUB_TOKEN_VERIFY_SCOPES}); the managed servers are read-only. Nothing was saved.${C_RESET:-}"
 		return 1
 		;;
 	*)
@@ -174,6 +179,14 @@ _github_token_menu_check() {
 			"${C_YELLOW:-}" "${C_RESET:-}" >&"$GITHUB_TOKEN_MENU_OUT_FD"
 		;;
 	esac
+}
+
+# Scope names are not secret and are the one thing worth showing. Silent when
+# GitHub published none -- which is what a fine-grained token does -- because
+# the alternative is a clause about absence on every ordinary success.
+_github_token_menu_scope_note() {
+	[[ -n "${GITHUB_TOKEN_VERIFY_SCOPES//[[:space:],]/}" ]] || return 0
+	printf ': %s' "$GITHUB_TOKEN_VERIFY_SCOPES"
 }
 
 _github_token_menu_save() {
@@ -219,7 +232,8 @@ _github_token_menu_reveal() {
 # The saved token, checked against GitHub on demand. Saving checks what is
 # being typed; nothing checked what was already there, and a token that was
 # good when it was saved is exactly the thing that expires or gets revoked
-# later. Same three outcomes as the save path, for the same reasons.
+# later. Same outcomes as the save path, for the same reasons -- including a
+# token that was read-only when saved and has since been given a write scope.
 _github_token_menu_check_saved() {
 	local token='' rc=0
 	github_token_read token
@@ -231,8 +245,9 @@ _github_token_menu_check_saved() {
 		"${C_DIM:-}" "${C_RESET:-}" >&"$GITHUB_TOKEN_MENU_OUT_FD"
 	github_token_verify "$token" || rc=$?
 	case "$rc" in
-	0) _github_token_menu_say "${C_GREEN:-}GitHub accepted the saved token.${C_RESET:-}" ;;
+	0) _github_token_menu_say "${C_GREEN:-}GitHub accepted the saved token$(_github_token_menu_scope_note).${C_RESET:-}" ;;
 	1) _github_token_menu_say "${C_RED:-}GitHub rejected the saved token; it is invalid, expired, or revoked.${C_RESET:-}" ;;
+	3) _github_token_menu_say "${C_RED:-}The saved token can write (${GITHUB_TOKEN_VERIFY_SCOPES}); replace it with a read-only one.${C_RESET:-}" ;;
 	*) _github_token_menu_say "${C_YELLOW:-}Could not reach GitHub to check the saved token.${C_RESET:-}" ;;
 	esac
 }

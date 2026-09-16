@@ -21,10 +21,50 @@ github_token_legacy_file() {
 # The token goes in through curl's private stdin config, never its argv, the
 # same discipline github_curl uses: an argv is world-readable in /proc.
 #
-#   0  accepted by GitHub
+#   0  accepted by GitHub, and not proven able to write
 #   1  refused by GitHub
 #   2  could not ask -- no curl, no network, or an answer that decides nothing
+#   3  accepted, but the token carries a scope that can write
+#
+# Exit 3 exists because "GitHub accepts it" and "it is safe to hand an agent"
+# are different questions. The managed servers are read-only by contract, so a
+# credential that could write is refused before it is stored rather than
+# warned about afterwards.
+#
+# GITHUB_TOKEN_VERIFY_SCOPES carries what was read, for a caller that wants to
+# show it. Scope names are not secret. It is empty when GitHub sent no
+# X-OAuth-Scopes header, which is what a fine-grained token does -- their
+# permissions are not published this way, so absence is unknown rather than
+# none, and unknown is never treated as a refusal.
 GITHUB_TOKEN_VERIFY_TIMEOUT="${GITHUB_TOKEN_VERIFY_TIMEOUT:-10}"
+GITHUB_TOKEN_VERIFY_SCOPES=''
+
+# Read-only classic scopes, allowlisted. The list is deny-by-default on
+# purpose: a scope GitHub adds later is unknown to this function and is treated
+# as write-capable, which fails closed. Note the traps -- `public_repo` writes
+# to public repositories, `gist` writes gists, and `admin:public_key` can add an
+# SSH key to the account -- none of which read as dangerous from the name.
+_github_token_scope_is_read_only() {
+	case "$1" in
+	read:* | repo:status | user:email) return 0 ;;
+	*) return 1 ;;
+	esac
+}
+
+# Split an X-OAuth-Scopes header value and report whether any scope can write.
+#   0  every scope is read-only
+#   1  at least one scope can write
+_github_token_scopes_are_read_only() {
+	local raw="$1" scope
+	[[ -n "${raw//[[:space:],]/}" ]] || return 0
+	local IFS=','
+	for scope in $raw; do
+		scope="${scope//[[:space:]]/}"
+		[[ -n "$scope" ]] || continue
+		_github_token_scope_is_read_only "$scope" || return 1
+	done
+	return 0
+}
 
 # curl carrying an explicit token, with the token in its private stdin config
 # and never in its argv, where /proc would publish it to every user on the
@@ -57,31 +97,53 @@ EOF
 	return "$rc"
 )
 
-github_token_verify() (
-	local token="$1" status='' rc=0 url
+# Not a subshell any more, deliberately: the scopes it reads have to survive
+# into the caller, and a ( ) body cannot set a variable the caller sees. The
+# token still never reaches an argv.
+github_token_verify() {
+	local token="$1" status='' rc=0 url headers='' scopes='' old_umask
+	GITHUB_TOKEN_VERIFY_SCOPES=''
 	# Inside the function that uses it: a sensitive URL at file scope sits
 	# outside any boundary, which is exactly what the consumer scanner reads it
 	# as, and it is right to.
 	url="${GITHUB_TOKEN_VERIFY_URL:-https://api.github.com/user}"
 	command -v curl >/dev/null 2>&1 || return 2
+	old_umask="$(umask)"
+	umask 077
+	headers="$(mktemp "${TMPDIR:-/tmp}/github-token-headers.XXXXXX")" || {
+		umask "$old_umask"
+		return 2
+	}
+	umask "$old_umask"
 	status="$(
 		github_token_curl "$token" \
 			--silent --output /dev/null --write-out '%{http_code}' \
+			--dump-header "$headers" \
 			--max-time "$GITHUB_TOKEN_VERIFY_TIMEOUT" --proto '=https' --tlsv1.2 \
 			--header 'Accept: application/vnd.github+json' \
 			--header 'User-Agent: dotfiles-token-check' \
 			"$url" 2>/dev/null
 	)" || rc=$?
+	# The header dump holds no credential -- it is the response, not the
+	# request -- but it is removed immediately regardless, because a file in
+	# the temporary directory outliving the call is a habit worth not forming.
+	if ((rc == 0)); then
+		scopes="$(sed -n 's/^[Xx]-[Oo][Aa]uth-[Ss]copes:[[:space:]]*//p' "$headers" | tr -d '\r' | tail -n1)"
+	fi
+	rm -f -- "$headers"
 	((rc == 0)) || return 2
 	case "$status" in
-	200) return 0 ;;
+	200) ;;
 	401) return 1 ;;
 	# 403 is a secondary rate limit or a blocked agent, not a verdict on the
 	# credential; anything else is GitHub having a bad day. Neither is grounds
 	# for refusing a token the operator may well have typed correctly.
 	*) return 2 ;;
 	esac
-)
+	GITHUB_TOKEN_VERIFY_SCOPES="$scopes"
+	_github_token_scopes_are_read_only "$scopes" || return 3
+	return 0
+}
 
 github_token_is_valid() {
 	local token="$1"

@@ -6,7 +6,7 @@
 |---|---|
 | `scripts/lib/shared/tui/` | The Bash renderer: colours, menus, tables, TTY handling |
 | `scripts/lib/shared/python/` | The Python layout module, probe classification, and the report renderer |
-| `scripts/lib/shared/github_token.sh` | Token storage, validation, and the GitHub check |
+| `scripts/lib/shared/github_token.sh` | Token storage, validation, and the GitHub check, including the scope reading that refuses a write-capable credential |
 | `scripts/lib/shared/github_token_menu.sh` | The token screen both products show |
 | `scripts/lib/shared/repo_update.sh` | The repository update state machine |
 | `scripts/lib/shared/repo_gate.sh` | Gating every repository a command depends on, in one pass |
