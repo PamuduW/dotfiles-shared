@@ -6,14 +6,20 @@ name: Validate
 # either product fails on this repository, where it was made, rather than on
 # whichever consumer next happened to run.
 on:
+  # This one keeps its push trigger where the two products dropped theirs. Its
+  # job is to run BOTH consumers against this checkout, so a break here is a
+  # break in code neither consumer has pulled yet. Waiting for a daily run
+  # would surface it up to a day later, on whichever product happened to run
+  # next -- which is exactly the failure this repository exists to prevent.
   push:
+    branches: [main]
   workflow_dispatch:
-  # Weekly, because the things that break this workspace without anyone
-  # touching it are upstream: the runner image, apt, and the versions of
-  # shellcheck, shfmt and ruff it ships. A Monday failure is a known
-  # environment change; the same failure found mid-task is a mystery.
+  # Daily as well, because the other half of what breaks it is upstream: the
+  # runner image, apt, and the versions of shellcheck, shfmt and ruff it ships.
+  # A scheduled failure is a known environment change; the same failure found
+  # mid-task is a mystery.
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "0 10 * * *"
 
 permissions:
   contents: read
