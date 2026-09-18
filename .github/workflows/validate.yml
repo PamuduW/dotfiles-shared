@@ -14,12 +14,13 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Daily as well, because the other half of what breaks it is upstream: the
+  # Daily as well, at 10:00 Asia/Colombo (04:30 UTC, which is what cron
+  # takes), because the other half of what breaks it is upstream: the
   # runner image, apt, and the versions of shellcheck, shfmt and ruff it ships.
   # A scheduled failure is a known environment change; the same failure found
   # mid-task is a mystery.
   schedule:
-    - cron: "0 10 * * *"
+    - cron: "30 4 * * *"
 
 permissions:
   contents: read
