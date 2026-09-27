@@ -4,10 +4,6 @@ github_token_file() {
 	printf '%s\n' "${XDG_CONFIG_HOME:-$HOME/.config}/agentbot/github.env"
 }
 
-github_token_legacy_file() {
-	printf '%s\n' "${XDG_CONFIG_HOME:-$HOME/.config}/agent_bootstrap/github.env"
-}
-
 # Whether GitHub itself accepts the credential, as opposed to whether it looks
 # like one. github_token_is_valid checks shape -- length and character class --
 # so a mistyped, expired or revoked token passed it and was saved, and the
@@ -305,35 +301,6 @@ github_token_fingerprint() {
 	printf '…%s (sha256:%s)\n' "${token: -4}" "$digest"
 }
 
-_github_token_migrate_legacy_impl() {
-	local legacy target legacy_token='' target_token=''
-	legacy="$(github_token_legacy_file)"
-	target="$(github_token_file)"
-	[[ -e "$legacy" || -L "$legacy" ]] || return 0
-	_github_token_read_private_file "$legacy" legacy_token "legacy GitHub token" || return 0
-	[[ -n "$legacy_token" ]] || return 0
-	if [[ -e "$target" || -L "$target" ]]; then
-		_github_token_read_private_file "$target" target_token "saved GitHub token" || return 0
-		if [[ -n "$target_token" && "$target_token" == "$legacy_token" ]]; then
-			rm -f -- "$legacy"
-			return 0
-		fi
-		_github_token_warn "legacy and active GitHub token files conflict" "$target"
-		return 0
-	fi
-	if github_token_write "$legacy_token"; then
-		rm -f -- "$legacy"
-	fi
-}
-
-github_token_migrate_legacy() {
-	local rc=0
-	_github_token_warning_scope_begin
-	_github_token_migrate_legacy_impl || rc=$?
-	_github_token_warning_scope_end
-	return "$rc"
-}
-
 github_token_export_if_valid() {
 	local token="${GITHUB_TOKEN:-}"
 	_github_token_warning_scope_begin
@@ -346,7 +313,6 @@ github_token_export_if_valid() {
 		_github_token_warn "GITHUB_TOKEN from the environment is invalid"
 		unset GITHUB_TOKEN
 	fi
-	github_token_migrate_legacy
 	github_token_read token
 	if [[ -n "$token" ]]; then
 		GITHUB_TOKEN="$token"
