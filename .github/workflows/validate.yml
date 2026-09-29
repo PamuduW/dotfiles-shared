@@ -11,8 +11,12 @@ on:
   # break in code neither consumer has pulled yet. Waiting for a daily run
   # would surface it up to a day later, on whichever product happened to run
   # next -- which is exactly the failure this repository exists to prevent.
+  # `development` is here because that is where the work happens now. A
+  # contract break caught only on main is caught after the merge that
+  # introduced it, which is too late to be the early warning this trigger
+  # exists to be.
   push:
-    branches: [main]
+    branches: [main, development]
   workflow_dispatch:
   # Daily as well, at 10:00 Asia/Colombo (04:30 UTC, which is what cron
   # takes), because the other half of what breaks it is upstream: the
