@@ -73,13 +73,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: dotfiles-shared
+      # The consumers on the same branch as this run: development is checked
+      # against development, main against main. All three repositories carry
+      # both branches.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: PamuduW/dotfiles
+          ref: ${{ github.ref_name }}
           path: dotfiles
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: PamuduW/agentbot
+          ref: ${{ github.ref_name }}
           path: agentbot
       # Agentbot's own check compares its two resolvers to each other. This is
       # the only place all four declarations are in one checkout at once.
@@ -106,9 +111,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: dotfiles-shared
+      # On the same branch as this run, as in the contract job.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: PamuduW/${{ matrix.consumer }}
+          ref: ${{ github.ref_name }}
           path: ${{ matrix.consumer }}
       # Only where the consumer's own workflow does. Dotfiles is a Bash product
       # whose suite uses the system interpreter; putting a tool-cache Python in

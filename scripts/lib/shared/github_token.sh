@@ -136,6 +136,7 @@ github_token_verify() {
 	# for refusing a token the operator may well have typed correctly.
 	*) return 2 ;;
 	esac
+	# shellcheck disable=SC2034  # Read by the caller that reports the scopes.
 	GITHUB_TOKEN_VERIFY_SCOPES="$scopes"
 	_github_token_scopes_are_read_only "$scopes" || return 3
 	return 0
