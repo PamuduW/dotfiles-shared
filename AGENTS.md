@@ -34,7 +34,7 @@ script until that mechanism was retired.
 There is no suite here. Shared code is exercised by its consumers:
 
 ```bash
-bash ../agentbot/tests/run.sh
+env -u NO_COLOR bash ../agentbot/tests/run.sh
 bash ../dotfiles/tests/run.sh
 ```
 
