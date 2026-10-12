@@ -21,6 +21,8 @@ github_token_file() {
 #   1  refused by GitHub
 #   2  could not ask -- no curl, no network, or an answer that decides nothing
 #   3  accepted, but the token carries a scope that can write
+#   4  accepted, but GitHub publishes no scopes for it, so whether it can
+#      write is unknown
 #
 # Exit 3 exists because "GitHub accepts it" and "it is safe to hand an agent"
 # are different questions. The managed servers are read-only by contract, so a
@@ -28,10 +30,12 @@ github_token_file() {
 # warned about afterwards.
 #
 # GITHUB_TOKEN_VERIFY_SCOPES carries what was read, for a caller that wants to
-# show it. Scope names are not secret. It is empty when GitHub sent no
-# X-OAuth-Scopes header, which is what a fine-grained token does -- their
-# permissions are not published this way, so absence is unknown rather than
-# none, and unknown is never treated as a refusal.
+# show it. Scope names are not secret. GitHub sends no X-OAuth-Scopes header
+# for a fine-grained token -- its permissions are not published this way -- so
+# absence is unknown rather than none. Exit 4 says so: the caller asks the
+# operator instead of either refusing the narrowest credential there is or
+# exporting one that might write to every shell. A classic token with no
+# scopes sends the header empty, and is read-only.
 GITHUB_TOKEN_VERIFY_TIMEOUT="${GITHUB_TOKEN_VERIFY_TIMEOUT:-10}"
 GITHUB_TOKEN_VERIFY_SCOPES=''
 
@@ -97,7 +101,7 @@ EOF
 # into the caller, and a ( ) body cannot set a variable the caller sees. The
 # token still never reaches an argv.
 github_token_verify() {
-	local token="$1" status='' rc=0 url headers='' scopes='' old_umask
+	local token="$1" status='' rc=0 url headers='' scopes='' published=0 old_umask
 	GITHUB_TOKEN_VERIFY_SCOPES=''
 	# Inside the function that uses it: a sensitive URL at file scope sits
 	# outside any boundary, which is exactly what the consumer scanner reads it
@@ -125,6 +129,7 @@ github_token_verify() {
 	# the temporary directory outliving the call is a habit worth not forming.
 	if ((rc == 0)); then
 		scopes="$(sed -n 's/^[Xx]-[Oo][Aa]uth-[Ss]copes:[[:space:]]*//p' "$headers" | tr -d '\r' | tail -n1)"
+		grep -qi '^x-oauth-scopes:' "$headers" && published=1
 	fi
 	rm -f -- "$headers"
 	((rc == 0)) || return 2
@@ -138,6 +143,7 @@ github_token_verify() {
 	esac
 	# shellcheck disable=SC2034  # Read by the caller that reports the scopes.
 	GITHUB_TOKEN_VERIFY_SCOPES="$scopes"
+	((published)) || return 4
 	_github_token_scopes_are_read_only "$scopes" || return 3
 	return 0
 }
