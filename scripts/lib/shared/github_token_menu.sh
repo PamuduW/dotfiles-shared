@@ -174,6 +174,17 @@ _github_token_menu_check() {
 		_github_token_menu_say "${C_RED:-}This token can write (${GITHUB_TOKEN_VERIFY_SCOPES}); the managed servers are read-only. Nothing was saved.${C_RESET:-}"
 		return 1
 		;;
+	4)
+		# A fine-grained token: GitHub accepted it but publishes nothing about
+		# what it may do. It is exported to every shell an agent runs, so only
+		# the operator, who set its permissions, can say it is read-only.
+		printf '  %sGitHub accepted it, but does not say whether this token can write.%s\n' \
+			"${C_YELLOW:-}" "${C_RESET:-}" >&"$GITHUB_TOKEN_MENU_OUT_FD"
+		if ! _github_token_menu_confirm "Does it have read-only permissions only?"; then
+			_github_token_menu_say "${C_RED:-}Only a read-only token is saved. Nothing was saved.${C_RESET:-}"
+			return 1
+		fi
+		;;
 	*)
 		printf '  %sCould not reach GitHub to check it; saving without a check.%s\n\n' \
 			"${C_YELLOW:-}" "${C_RESET:-}" >&"$GITHUB_TOKEN_MENU_OUT_FD"
@@ -248,6 +259,7 @@ _github_token_menu_check_saved() {
 	0) _github_token_menu_say "${C_GREEN:-}GitHub accepted the saved token$(_github_token_menu_scope_note).${C_RESET:-}" ;;
 	1) _github_token_menu_say "${C_RED:-}GitHub rejected the saved token; it is invalid, expired, or revoked.${C_RESET:-}" ;;
 	3) _github_token_menu_say "${C_RED:-}The saved token can write (${GITHUB_TOKEN_VERIFY_SCOPES}); replace it with a read-only one.${C_RESET:-}" ;;
+	4) _github_token_menu_say "${C_YELLOW:-}GitHub accepted the saved token but does not say whether it can write; keep its permissions read-only.${C_RESET:-}" ;;
 	*) _github_token_menu_say "${C_YELLOW:-}Could not reach GitHub to check the saved token.${C_RESET:-}" ;;
 	esac
 }
