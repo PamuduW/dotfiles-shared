@@ -42,11 +42,12 @@ GITHUB_TOKEN_VERIFY_SCOPES=''
 # Read-only classic scopes, allowlisted. The list is deny-by-default on
 # purpose: a scope GitHub adds later is unknown to this function and is treated
 # as write-capable, which fails closed. Note the traps -- `public_repo` writes
-# to public repositories, `gist` writes gists, and `admin:public_key` can add an
-# SSH key to the account -- none of which read as dangerous from the name.
+# to public repositories, `gist` writes gists, `admin:public_key` can add an
+# SSH key to the account, and `repo:status` writes commit statuses -- none of
+# which read as dangerous from the name.
 _github_token_scope_is_read_only() {
 	case "$1" in
-	read:* | repo:status | user:email) return 0 ;;
+	read:* | user:email) return 0 ;;
 	*) return 1 ;;
 	esac
 }
