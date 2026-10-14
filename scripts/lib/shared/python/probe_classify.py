@@ -58,16 +58,6 @@ def codex_cli(*, state: str, path: str, version: str, rc: int) -> str:
     return "missing|codex not on PATH"
 
 
-def missing_package_count(entries: list[str], installed: set[str]) -> int:
-    """Defect 9: entries may be `preferred|fallback` renames, and querying the
-    raw entry counted a renamed package as missing even though it was installed
-    under its current name. An entry is present when any alternative is."""
-    present = sum(
-        1 for entry in entries if any(alt and alt in installed for alt in entry.split("|"))
-    )
-    return max(0, len(entries) - present)
-
-
 def package_gaps(entries: list[str], installed: set[str], available: set[str]) -> tuple[int, int]:
     """(missing, unavailable) for entries with no installed alternative.
 
