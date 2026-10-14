@@ -14,12 +14,12 @@ is the working policy.
 
 ## Where the rules live
 
-This repository holds code, not contracts. The rules its code implements are
-written down in the workspace:
-
-- **Presentation** — `docs/designs/presentation/README.md` in the workspace
-  repository. Report shape, section rules, colour meaning, the left edge, and
-  the lexicon. Every rule names the test that holds it.
-- **Why this repository exists** — workspace `docs/adr/0002-one-shared-library-repository.md`.
-- **The language split** — workspace `docs/adr/0001-python-above-a-thin-bash-bootstrap.md`.
-  It is why several things here exist twice, in Bash and in Python.
+- **Presentation** — [`presentation.md`](presentation.md): report shape,
+  section rules, colour meaning, the left edge, and the lexicon. Every rule
+  names the test that holds it.
+- **Why this repository exists** — Dotfiles and Agentbot load the same
+  renderer, layout and readings at runtime, so they share one implementation
+  instead of two copies that drift.
+- **The language split** — Python wherever an interpreter exists, Bash for the
+  bootstrap that runs before one does. It is why several things here exist
+  twice, in Bash and in Python.

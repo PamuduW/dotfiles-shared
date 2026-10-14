@@ -105,5 +105,3 @@ It has a consequence worth knowing. A push here can turn a consumer red without
 that consumer changing, and the failure appears on both. That is the intended
 signal — the pairing broke, and the pairing is what `CONTRACT` describes — but
 it means a red consumer is not always the consumer's fault.
-
-The workspace repository pins exact revisions; CI does not use them.
