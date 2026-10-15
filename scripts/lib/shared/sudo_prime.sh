@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # One masked password prompt per run, instead of sudo's silent one.
 #
-# sudo caches a successful authentication for the rest of the run, so priming it
+# sudo caches a successful authentication during the run, so priming it
 # once up front means the 47 later `sudo` calls never prompt at all -- and the
 # single prompt the operator does see masks with `*` like every other prompt
 # these tools own, and the run places it rather than sudo surfacing it from
@@ -19,6 +19,14 @@ _DOTFILES_SUDO_PRIME_LOADED=1
 
 _SUDO_PRIME_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
+# The owning entrypoint calls this from its exit cleanup. Never invalidate a
+# ticket that existed before this run, or one owned by the parent of a subshell.
+sudo_prime_cleanup() {
+	[[ "${_SUDO_PRIME_OWNER:-}" == "$BASHPID" ]] || return 0
+	_SUDO_PRIME_OWNER=''
+	sudo -k >/dev/null 2>&1 || true
+}
+
 sudo_prime() {
 	local helper="$_SUDO_PRIME_DIR/askpass.sh"
 
@@ -31,6 +39,7 @@ sudo_prime() {
 			# The masked prompt ends its own line; this is the gap between it
 			# and the install output, printed only when a prompt was shown --
 			# an already-authenticated run returned above and adds nothing.
+			_SUDO_PRIME_OWNER=$BASHPID
 			tty_printf '\n'
 			return 0
 		fi
@@ -39,5 +48,9 @@ sudo_prime() {
 		return 1
 	fi
 
-	sudo -v
+	if sudo -v; then
+		_SUDO_PRIME_OWNER=$BASHPID
+		return 0
+	fi
+	return 1
 }
