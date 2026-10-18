@@ -168,15 +168,17 @@ def go(
     return "missing|working Go installation not found"
 
 
-def git_credential(*, helper: str, recurse: str, fetch: str, push: str, summary: str) -> str:
-    """Five inputs, three outcomes. Every submodule default set but no
-    credential helper is a different message from a partial configuration, and
-    one value of five separates them."""
+def git_credential(
+    *, helper: str, recurse: str, fetch: str, push: str, summary: str, protocol: str = ""
+) -> str:
+    """SSH transport does not need an HTTPS credential helper."""
     defaults_set = (
         recurse == "true" and fetch == "on-demand" and push == "check" and summary == "true"
     )
     if defaults_set and helper:
         return "configured|credential helper + recursive submodule defaults"
+    if defaults_set and protocol == "ssh":
+        return "configured|GitHub SSH protocol + recursive submodule defaults"
     if defaults_set:
         return "check|submodule defaults set; credential helper not configured"
     return "check|Git configuration incomplete"
@@ -292,9 +294,10 @@ def classify(fields: list[str]) -> str:
         state, path, ver, rc = args
         return codex_cli(state=state, path=path, version=ver, rc=int(rc or 0))
     if name == "git_credential":
-        helper, recurse, fetch, push, summary = args
+        helper, recurse, fetch, push, summary = args[:5]
         return git_credential(
-            helper=helper, recurse=recurse, fetch=fetch, push=push, summary=summary
+            helper=helper, recurse=recurse, fetch=fetch, push=push, summary=summary,
+            protocol=args[5] if len(args) > 5 else "",
         )
     if name == "apt":
         # Variable arity: the package entries and the installed names are both

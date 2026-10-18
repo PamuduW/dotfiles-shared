@@ -136,12 +136,28 @@ def git_identity() -> str:
 
 
 def git_credential() -> str:
+    helper = _git_config("--get-all", "credential.helper")
+    protocol = ""
+    if not helper:
+        try:
+            done = subprocess.run(
+                ["gh", "config", "get", "git_protocol", "--host", "github.com"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=5,
+            )
+            if done.returncode == 0:
+                protocol = done.stdout.strip()
+        except (OSError, subprocess.TimeoutExpired):
+            pass
     return probe_classify.git_credential(
-        helper=_git_config("--get-all", "credential.helper"),
+        helper=helper,
         recurse=_git_config("--get", "submodule.recurse"),
         fetch=_git_config("--get", "fetch.recurseSubmodules"),
         push=_git_config("--get", "push.recurseSubmodules"),
         summary=_git_config("--get", "status.submoduleSummary"),
+        protocol=protocol,
     )
 
 
