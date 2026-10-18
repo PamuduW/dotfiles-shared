@@ -37,6 +37,9 @@ Revision 4 adds an optional GitHub transport field to the Git credential probe
 classification request. The five-field request remains supported. With the
 submodule defaults set, GitHub CLI's SSH protocol setting satisfies the check
 without an HTTPS credential helper; the probe does not test network access.
+An absent helper is informational even without a GitHub CLI protocol setting:
+SSH and public HTTPS reads do not require one. Missing submodule defaults still
+need attention.
 
 At least, not exactly. A raise means a consumer started needing something this
 tree gained, so a shared checkout *ahead* of a consumer is a superset and is
