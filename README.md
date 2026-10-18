@@ -33,6 +33,11 @@ If none resolve, the consumer stops with the clone command rather than a bare
 `CONTRACT` holds a single integer. Each consumer declares the version it
 requires and checks during preflight that this checkout is **at least** that.
 
+Revision 4 adds an optional GitHub transport field to the Git credential probe
+classification request. The five-field request remains supported. With the
+submodule defaults set, GitHub CLI's SSH protocol setting satisfies the check
+without an HTTPS credential helper; the probe does not test network access.
+
 At least, not exactly. A raise means a consumer started needing something this
 tree gained, so a shared checkout *ahead* of a consumer is a superset and is
 accepted. *Behind* is the failing direction: the files that consumer loads are
