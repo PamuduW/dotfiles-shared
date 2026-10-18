@@ -180,7 +180,7 @@ def git_credential(
     if defaults_set and protocol == "ssh":
         return "configured|GitHub SSH protocol + recursive submodule defaults"
     if defaults_set:
-        return "check|submodule defaults set; credential helper not configured"
+        return "configured|recursive submodule defaults; HTTPS credential helper optional"
     return "check|Git configuration incomplete"
 
 
