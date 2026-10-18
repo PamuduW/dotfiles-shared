@@ -296,7 +296,11 @@ def classify(fields: list[str]) -> str:
     if name == "git_credential":
         helper, recurse, fetch, push, summary = args[:5]
         return git_credential(
-            helper=helper, recurse=recurse, fetch=fetch, push=push, summary=summary,
+            helper=helper,
+            recurse=recurse,
+            fetch=fetch,
+            push=push,
+            summary=summary,
             protocol=args[5] if len(args) > 5 else "",
         )
     if name == "apt":
