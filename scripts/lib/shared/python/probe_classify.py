@@ -235,6 +235,14 @@ def monaspace_fonts(*, present: bool, count: str, version: str) -> str:
     return f"installed|{version} ({count} fonts)"
 
 
+def ubuntu_sans_mono_fonts(*, present: bool, count: str, version: str) -> str:
+    """A directory with no .ttf in it is not an installation, so presence here
+    means the fonts, never the folder."""
+    if not present:
+        return "missing|fonts not in ~/.local/share/fonts/ubuntu-sans-mono"
+    return f"installed|{version} ({count} fonts)"
+
+
 def stow_targets(*, missing: int) -> str:
     """A link pointing somewhere else is as missing as no link at all: the
     count is of targets that do not resolve to this checkout."""
@@ -367,6 +375,9 @@ def classify(fields: list[str]) -> str:
             path=path,
             owned=owned == "1",
         )
+    if name == "ubuntu_sans_mono_fonts":
+        present, count, ver = args
+        return ubuntu_sans_mono_fonts(present=present == "1", count=count, version=ver)
     if name == "monaspace_fonts":
         present, count, ver = args
         return monaspace_fonts(present=present == "1", count=count, version=ver)

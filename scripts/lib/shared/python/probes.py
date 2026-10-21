@@ -61,6 +61,24 @@ def monaspace_fonts() -> str:
     )
 
 
+def ubuntu_sans_mono_fonts() -> str:
+    """A directory is not an installation; the .ttf files are.
+
+    The version comes from a `.version` file the installer drops, and its
+    absence is normal on a hand-copied install -- hence the literal fallback
+    rather than "unknown".
+    """
+    font_dir = _home() / ".local/share/fonts/ubuntu-sans-mono"
+    fonts = sorted(font_dir.glob("*.ttf")) if font_dir.is_dir() else []
+    if not fonts:
+        return probe_classify.ubuntu_sans_mono_fonts(present=False, count="", version="")
+    version_file = font_dir / ".version"
+    version = version_file.read_text(encoding="utf-8").strip() if version_file.is_file() else ""
+    return probe_classify.ubuntu_sans_mono_fonts(
+        present=True, count=str(len(fonts)), version=version or "installed"
+    )
+
+
 def stow_targets(repo: Path) -> str:
     """A link into a different checkout counts as missing.
 
@@ -163,6 +181,7 @@ def git_credential() -> str:
 
 PROBES = {
     "monaspace_fonts": lambda repo: monaspace_fonts(),
+    "ubuntu_sans_mono_fonts": lambda repo: ubuntu_sans_mono_fonts(),
     "dotfiles": stow_targets,
     "wsl_conf": lambda repo: wsl_conf(),
     "git_identity": lambda repo: git_identity(),
