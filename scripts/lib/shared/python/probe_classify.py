@@ -113,7 +113,7 @@ def version(
     extract: str,
     prefix: str,
 ) -> str:
-    """Shared by roughly ten components. An empty version still reports
+    """Shared by roughly ten components. An empty successful version reports
     installed: the binary resolved and answered, so falling back to its label
     beats claiming it is missing."""
     import re
@@ -122,6 +122,8 @@ def version(
         return f"missing|{missing_label} not on PATH"
     if rc == TIMEOUT_RC:
         return f"check|{timeout_label} probe timed out"
+    if rc != 0:
+        return f"check|{timeout_label} version query failed (exit {rc})"
     shown = raw
     if extract:
         match = re.search(extract, raw)
