@@ -99,6 +99,37 @@ jobs:
           path: ${{ runner.temp }}/catalog-tooling-smoke.json
           if-no-files-found: error
           retention-days: 7
+      - name: Install real user-local tools in clean Ubuntu
+        run: |
+          set -euo pipefail
+          image="catalog-user-tools:$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker build --build-arg "TEST_UID=$(id -u)" --tag "$image" \
+            --file dotfiles/scripts/catalog/Dockerfile.qualify dotfiles/scripts/catalog
+          docker image inspect --format '{{.Id}}' "$image"
+          docker run --rm --memory=4g --memory-swap=4g --cpus=2 --pids-limit=512 \
+            --workdir "$GITHUB_WORKSPACE" \
+            --volume "$GITHUB_WORKSPACE/dotfiles:$GITHUB_WORKSPACE/dotfiles:ro" \
+            --volume "$GITHUB_WORKSPACE/agentbot:$GITHUB_WORKSPACE/agentbot:ro" \
+            --volume "$GITHUB_WORKSPACE/dotfiles-shared:$GITHUB_WORKSPACE/dotfiles-shared:ro" \
+            --volume "$RUNNER_TEMP/catalog-output:$RUNNER_TEMP/catalog-output" \
+            "$image" bash -c '
+              set -euo pipefail
+              bash "$1/dotfiles/scripts/catalog/bootstrap-tools.sh" \
+                "$2/qualification-context.json" /home/op/test-home /home/op/tools.json
+              env -i PATH=/home/op/test-home/.local/bin:/usr/bin:/bin \
+                HOME=/home/op/test-home USER=op LANG=C.UTF-8 \
+                python3 "$1/dotfiles/scripts/catalog/qualify-user-tools.py" \
+                  "$2/qualification-context.json" --output "$2/user-tools-smoke.json"
+            ' bash "$GITHUB_WORKSPACE" "$RUNNER_TEMP/catalog-output"
+      - name: Preserve user-tools smoke evidence and container scan
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: user-tools-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/catalog-output/user-tools-smoke.json
+            ${{ runner.temp }}/catalog-output/container-vulnerabilities.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Explain result
         if: always()
         run: |
@@ -107,5 +138,7 @@ jobs:
           A discovery or dependency failure retains the existing catalog.
           Tooling smoke tests cover real Node/npm/uv provisioning and fresh/repeat
           Agentbot Python and Skills CLI installs. They do not qualify the full inventory.
+          A clean Ubuntu container also exercises fresh/repeat user-local tools.
+          Vendor apt packages, Docker/Portainer, fonts and editor extensions need separate coverage.
           Full installation scenarios and the protected publisher are still required.
           SUMMARY

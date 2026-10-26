@@ -62,3 +62,13 @@ seed run through the existing workflow:
 `gh workflow run validate.yml --repo PamuduW/dotfiles-shared --ref development -f mode=seed`.
 The default `checks` mode still runs the regression gates. `proposal` mode needs
 an approved baseline. These modes share the candidate implementation.
+
+A separate clean Ubuntu 24.04 container extends smoke coverage to Dotfiles'
+user-local software. Selection comes from the frozen inventory; deb/OCI artifacts
+and fonts remain outside that driver. It installs each selected tool, verifies
+ownership and the physical version, then repeats the install. Sources are mounted
+read-only, the container runs as a non-root user with memory/CPU/process limits,
+and no Docker socket or credentials are mounted. A pinned Trivy runs a container
+filesystem scan and records findings; the scan report does not certify an absence
+of vulnerabilities. This driver and its separate `user-tools-smoke` artifact
+remain partial evidence, not full qualification or permission to publish.
