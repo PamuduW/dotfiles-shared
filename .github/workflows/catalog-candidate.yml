@@ -67,12 +67,45 @@ jobs:
           path: ${{ runner.temp }}/catalog-output
           if-no-files-found: error
           retention-days: 7
+      - name: Install and smoke-test the selected tooling in a private home
+        run: |
+          set -euo pipefail
+          python3 - "$RUNNER_TEMP/catalog-output" "$GITHUB_WORKSPACE" <<'PYTHON'
+          import json, pathlib, sys
+          output, workspace = map(pathlib.Path, sys.argv[1:])
+          proposal = json.loads((output / "proposal.json").read_text())
+          context = {
+              "schema_version": 1,
+              "catalog": str(output / "candidate"),
+              "digest": proposal["catalog_digest"],
+              "sources": {name: str(workspace / name) for name in proposal["sources"]},
+          }
+          with (output / "qualification-context.json").open("x") as stream:
+              json.dump(context, stream)
+          PYTHON
+          bash dotfiles/scripts/catalog/bootstrap-tools.sh \
+            "$RUNNER_TEMP/catalog-output/qualification-context.json" \
+            "$RUNNER_TEMP/catalog-tooling-home" "$RUNNER_TEMP/catalog-tools.json"
+          env -i PATH="$RUNNER_TEMP/catalog-tooling-home/.local/bin:/usr/bin:/bin" \
+            LANG=C.UTF-8 HOME="$RUNNER_TEMP/catalog-tooling-home" USER="$(id -un)" \
+            SKILLS_DISABLE_TELEMETRY=1 \
+            python3 agentbot/scripts/catalog/qualify-tooling.py \
+              "$RUNNER_TEMP/catalog-output/qualification-context.json" \
+              --output "$RUNNER_TEMP/catalog-tooling-smoke.json"
+      - name: Preserve tooling smoke evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tooling-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-tooling-smoke.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Explain result
         if: always()
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
           This job prepares candidate data only. It cannot approve or publish versions.
           A discovery or dependency failure retains the existing catalog.
-          Fresh, upgrade, repeat and failure-recovery installation qualification
-          and the protected publisher are still required before rollout.
+          Tooling smoke tests cover real Node/npm/uv provisioning and fresh/repeat
+          Agentbot Python and Skills CLI installs. They do not qualify the full inventory.
+          Full installation scenarios and the protected publisher are still required.
           SUMMARY

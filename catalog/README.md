@@ -48,8 +48,13 @@ or upgrade it. An unknown or missing built-in dependency blocks installation.
 `Catalog candidate discovery` is a read-only daily workflow on `ubuntu-24.04`.
 It uploads a complete, unapproved proposal with its source identities. The manual
 `seed` input prepares initial tooling when no approved catalog exists. Scheduled
-runs require an approved baseline. A proposal artifact is not installation
-qualification or permission to publish. The installation controller and protected
+runs require an approved baseline. A proposal artifact is not full installation qualification or permission to
+publish. After discovery, a private-home smoke test installs the selected
+Node/npm/uv tooling, then Agentbot's Python wheel closure and Skills CLI npm
+closure. It checks installed Python distribution versions, exact physical Node/npm
+versions, CLI startup and repeat-install reuse. Its separate `tooling-smoke`
+artifact covers this subset only. It cannot satisfy the full inventory, upgrade
+or failure-recovery gates. The full installation controller and protected
 publisher are still required before enabling catalog rollout.
 
 While the candidate workflow exists only on development, start its read-only
