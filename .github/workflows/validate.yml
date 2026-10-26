@@ -18,6 +18,12 @@ on:
   push:
     branches: [main, development]
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Run checks, prepare the initial seed, or discover from approved data
+        type: choice
+        options: [checks, seed, proposal]
+        default: checks
   # Daily as well, at 10:00 Asia/Colombo (04:30 UTC, which is what cron
   # takes), because the other half of what breaks it is upstream: the
   # runner image, apt, and the versions of shellcheck, shfmt and ruff it ships.
@@ -34,7 +40,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  candidate:
+    if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'seed' || inputs.mode == 'proposal')
+    uses: $/.github/workflows/catalog-candidate.yml
+    with:
+      seed: ${{ inputs.mode == 'seed' }}
+
   lint:
+    if: inputs.mode != 'seed' && inputs.mode != 'proposal'
     name: Lint this tree
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -72,6 +85,7 @@ jobs:
         run: git diff --check
 
   contract:
+    if: inputs.mode != 'seed' && inputs.mode != 'proposal'
     name: CONTRACT agreement
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -103,6 +117,7 @@ jobs:
             dotfiles-shared dotfiles agentbot
 
   consumers:
+    if: inputs.mode != 'seed' && inputs.mode != 'proposal'
     name: ${{ matrix.consumer }} against this checkout
     runs-on: ubuntu-latest
     timeout-minutes: 25

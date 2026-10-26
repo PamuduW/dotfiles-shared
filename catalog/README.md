@@ -51,3 +51,9 @@ It uploads a complete, unapproved proposal with its source identities. The manua
 runs require an approved baseline. A proposal artifact is not installation
 qualification or permission to publish. The installation controller and protected
 publisher are still required before enabling catalog rollout.
+
+While the candidate workflow exists only on development, start its read-only
+seed run through the existing workflow:
+`gh workflow run validate.yml --repo PamuduW/dotfiles-shared --ref development -f mode=seed`.
+The default `checks` mode still runs the regression gates. `proposal` mode needs
+an approved baseline. These modes share the candidate implementation.

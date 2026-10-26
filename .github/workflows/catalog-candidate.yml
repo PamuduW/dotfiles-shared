@@ -1,6 +1,12 @@
 name: Catalog candidate discovery
 
 on:
+  workflow_call:
+    inputs:
+      seed:
+        description: Prepare initial unapproved data
+        type: boolean
+        default: false
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:
