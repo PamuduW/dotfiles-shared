@@ -1,0 +1,72 @@
+name: Catalog candidate discovery
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: Prepare the first unapproved catalog (never publishes it)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: catalog-candidate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    name: Discover complete Linux AMD64 candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          path: dotfiles-shared
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: PamuduW/agentbot
+          ref: ${{ github.ref_name }}
+          path: agentbot
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          repository: PamuduW/dotfiles
+          ref: ${{ github.ref_name }}
+          path: dotfiles
+      - name: Resolve frozen proposal with isolated discovery tools
+        env:
+          PREPARE_SEED: ${{ inputs.seed == true && '1' || '0' }}
+          CATALOG_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ "$PREPARE_SEED" == 1 ]]; then args+=(--seed); fi
+          mkdir -m 700 "$RUNNER_TEMP/catalog-output"
+          python3 dotfiles-shared/scripts/catalog/propose.py dotfiles-shared/catalog \
+            --source "dotfiles-shared=$GITHUB_WORKSPACE/dotfiles-shared" \
+            --source "agentbot=$GITHUB_WORKSPACE/agentbot" \
+            --source "dotfiles=$GITHUB_WORKSPACE/dotfiles" \
+            --output "$RUNNER_TEMP/catalog-output/candidate" \
+            "${args[@]}" > "$RUNNER_TEMP/catalog-output/proposal.json"
+      - name: Preserve unapproved data and source identities
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: unapproved-catalog-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output
+          if-no-files-found: error
+          retention-days: 7
+      - name: Explain result
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          This job prepares candidate data only. It cannot approve or publish versions.
+          A discovery or dependency failure retains the existing catalog.
+          Fresh, upgrade, repeat and failure-recovery installation qualification
+          and the protected publisher are still required before rollout.
+          SUMMARY

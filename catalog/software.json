@@ -1,0 +1,2243 @@
+{
+  "auto_promote": false,
+  "components": {
+    "antigravity_cli": {
+      "blockers": [],
+      "discovery": {
+        "auto_update_env": "AGY_CLI_DISABLE_AUTO_UPDATE",
+        "auto_update_value": "true",
+        "locator": "linux_amd64",
+        "provider": "antigravity-manifest"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "asdf": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "asset": "asdf-v{version}-linux-{arch}.tar.gz",
+        "binary": "asdf",
+        "locator": "asdf-vm/asdf",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "asdf-vm/asdf",
+      "targets": {}
+    },
+    "asdf-golang": {
+      "blockers": [],
+      "discovery": {
+        "locator": "asdf-community/asdf-golang",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "asdf-community/asdf-golang",
+      "targets": {}
+    },
+    "boost_cli": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "asset": "boost-linux-{arch}.tar.gz",
+        "binary": "boost",
+        "locator": "jfrog/boost",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "chrome_headless": {
+      "blockers": [],
+      "discovery": {
+        "locator": "Stable",
+        "provider": "chrome-for-testing"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "claude_cli": {
+      "blockers": [],
+      "discovery": {
+        "auto_update_env": "DISABLE_UPDATES",
+        "auto_update_value": "1",
+        "locator": "stable",
+        "provider": "claude-native"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "codex_cli": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "asset": "codex-package-{triple}-unknown-linux-musl.tar.gz",
+        "binary": "bin/codex",
+        "locator": "openai/codex",
+        "provider": "github-release",
+        "tag_prefix": "rust-v"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "cspell": {
+      "blockers": [],
+      "discovery": {
+        "archive": "npm-lock",
+        "binary": "cspell",
+        "locator": "cspell",
+        "provider": "npm"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "nodejs",
+        "npm",
+        "nvm"
+      ],
+      "source": "cspell",
+      "targets": {}
+    },
+    "cursor_cli": {
+      "blockers": [],
+      "discovery": {
+        "locator": "cursor.com/cli",
+        "provider": "manual"
+      },
+      "kind": "external",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "direnv": {
+      "blockers": [],
+      "discovery": {
+        "archive": "raw",
+        "asset": "direnv.linux-{arch}",
+        "binary": "direnv",
+        "locator": "direnv/direnv",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "docker": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "group",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "docker.containerd.io": {
+      "blockers": [],
+      "discovery": {
+        "channel": "noble",
+        "locator": "containerd.io",
+        "provider": "docker-apt"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "containerd.io",
+      "targets": {}
+    },
+    "docker.docker-buildx-plugin": {
+      "blockers": [],
+      "discovery": {
+        "channel": "noble",
+        "locator": "docker-buildx-plugin",
+        "provider": "docker-apt"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "docker-buildx-plugin",
+      "targets": {}
+    },
+    "docker.docker-ce": {
+      "blockers": [],
+      "discovery": {
+        "channel": "noble",
+        "locator": "docker-ce",
+        "provider": "docker-apt"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "docker-ce",
+      "targets": {}
+    },
+    "docker.docker-ce-cli": {
+      "blockers": [],
+      "discovery": {
+        "channel": "noble",
+        "locator": "docker-ce-cli",
+        "provider": "docker-apt"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "docker-ce-cli",
+      "targets": {}
+    },
+    "docker.docker-compose-plugin": {
+      "blockers": [],
+      "discovery": {
+        "channel": "noble",
+        "locator": "docker-compose-plugin",
+        "provider": "docker-apt"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "docker-compose-plugin",
+      "targets": {}
+    },
+    "dotfiles": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "configuration",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "extension.charliermarsh.ruff": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "charliermarsh.ruff",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "charliermarsh.ruff",
+      "targets": {}
+    },
+    "extension.davidanson.vscode-markdownlint": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "davidanson.vscode-markdownlint",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "davidanson.vscode-markdownlint",
+      "targets": {}
+    },
+    "extension.docker.docker": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "docker.docker",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "docker.docker",
+      "targets": {}
+    },
+    "extension.ecmel.vscode-html-css": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ecmel.vscode-html-css",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ecmel.vscode-html-css",
+      "targets": {}
+    },
+    "extension.editorconfig.editorconfig": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "editorconfig.editorconfig",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "editorconfig.editorconfig",
+      "targets": {}
+    },
+    "extension.esbenp.prettier-vscode": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "esbenp.prettier-vscode",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "esbenp.prettier-vscode",
+      "targets": {}
+    },
+    "extension.github.github-vscode-theme": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "github.github-vscode-theme",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "github.github-vscode-theme",
+      "targets": {}
+    },
+    "extension.github.remotehub": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "github.remotehub",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "github.remotehub",
+      "targets": {}
+    },
+    "extension.github.vscode-github-actions": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "github.vscode-github-actions",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "github.vscode-github-actions",
+      "targets": {}
+    },
+    "extension.github.vscode-pull-request-github": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "github.vscode-pull-request-github",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "github.vscode-pull-request-github",
+      "targets": {}
+    },
+    "extension.gitlab.gitlab-workflow": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "gitlab.gitlab-workflow",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "gitlab.gitlab-workflow",
+      "targets": {}
+    },
+    "extension.golang.go": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "golang.go",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "golang.go",
+      "targets": {}
+    },
+    "extension.humao.rest-client": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "humao.rest-client",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "humao.rest-client",
+      "targets": {}
+    },
+    "extension.irongeek.vscode-env": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "irongeek.vscode-env",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "irongeek.vscode-env",
+      "targets": {}
+    },
+    "extension.johnpapa.vscode-peacock": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "johnpapa.vscode-peacock",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "johnpapa.vscode-peacock",
+      "targets": {}
+    },
+    "extension.m4ns0ur.base64": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "m4ns0ur.base64",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "m4ns0ur.base64",
+      "targets": {}
+    },
+    "extension.mads-hartmann.bash-ide-vscode": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "mads-hartmann.bash-ide-vscode",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "mads-hartmann.bash-ide-vscode",
+      "targets": {}
+    },
+    "extension.mechatroner.rainbow-csv": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "mechatroner.rainbow-csv",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "mechatroner.rainbow-csv",
+      "targets": {}
+    },
+    "extension.mhutchie.git-graph": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "mhutchie.git-graph",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "mhutchie.git-graph",
+      "targets": {}
+    },
+    "extension.mkhl.shfmt": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "mkhl.shfmt",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "mkhl.shfmt",
+      "targets": {}
+    },
+    "extension.ms-azuretools.vscode-azureresourcegroups": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-azuretools.vscode-azureresourcegroups",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-azuretools.vscode-azureresourcegroups",
+      "targets": {}
+    },
+    "extension.ms-azuretools.vscode-containers": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-azuretools.vscode-containers",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-azuretools.vscode-containers",
+      "targets": {}
+    },
+    "extension.ms-azuretools.vscode-dev-azurecloudshell-helper": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-azuretools.vscode-dev-azurecloudshell-helper",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-azuretools.vscode-dev-azurecloudshell-helper",
+      "targets": {}
+    },
+    "extension.ms-kubernetes-tools.vscode-kubernetes-tools": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-kubernetes-tools.vscode-kubernetes-tools",
+      "targets": {}
+    },
+    "extension.ms-python.debugpy": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-python.debugpy",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-python.debugpy",
+      "targets": {}
+    },
+    "extension.ms-python.python": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-python.python",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-python.python",
+      "targets": {}
+    },
+    "extension.ms-python.vscode-pylance": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-python.vscode-pylance",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-python.vscode-pylance",
+      "targets": {}
+    },
+    "extension.ms-python.vscode-python-envs": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-python.vscode-python-envs",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-python.vscode-python-envs",
+      "targets": {}
+    },
+    "extension.ms-vscode-remote.remote-containers": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode-remote.remote-containers",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode-remote.remote-containers",
+      "targets": {}
+    },
+    "extension.ms-vscode-remote.remote-ssh": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode-remote.remote-ssh",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode-remote.remote-ssh",
+      "targets": {}
+    },
+    "extension.ms-vscode-remote.remote-ssh-edit": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode-remote.remote-ssh-edit",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode-remote.remote-ssh-edit",
+      "targets": {}
+    },
+    "extension.ms-vscode-remote.remote-wsl": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode-remote.remote-wsl",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode-remote.remote-wsl",
+      "targets": {}
+    },
+    "extension.ms-vscode-remote.vscode-remote-extensionpack": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode-remote.vscode-remote-extensionpack",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode-remote.vscode-remote-extensionpack",
+      "targets": {}
+    },
+    "extension.ms-vscode.makefile-tools": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-vscode.makefile-tools",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.makefile-tools",
+      "targets": {}
+    },
+    "extension.ms-vscode.powershell": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-vscode.powershell",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.powershell",
+      "targets": {}
+    },
+    "extension.ms-vscode.remote-explorer": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode.remote-explorer",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.remote-explorer",
+      "targets": {}
+    },
+    "extension.ms-vscode.remote-repositories": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode.remote-repositories",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.remote-repositories",
+      "targets": {}
+    },
+    "extension.ms-vscode.remote-server": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "ms-vscode.remote-server",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.remote-server",
+      "targets": {}
+    },
+    "extension.ms-vscode.vscode-copilot-vision": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-vscode.vscode-copilot-vision",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.vscode-copilot-vision",
+      "targets": {}
+    },
+    "extension.ms-vscode.vscode-websearchforcopilot": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "ms-vscode.vscode-websearchforcopilot",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ms-vscode.vscode-websearchforcopilot",
+      "targets": {}
+    },
+    "extension.pkief.material-icon-theme": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "pkief.material-icon-theme",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "pkief.material-icon-theme",
+      "targets": {}
+    },
+    "extension.pkief.material-product-icons": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows",
+        "locator": "pkief.material-product-icons",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "pkief.material-product-icons",
+      "targets": {}
+    },
+    "extension.redhat.vscode-xml": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "redhat.vscode-xml",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "redhat.vscode-xml",
+      "targets": {}
+    },
+    "extension.redhat.vscode-yaml": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "redhat.vscode-yaml",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "redhat.vscode-yaml",
+      "targets": {}
+    },
+    "extension.streetsidesoftware.code-spell-checker": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "streetsidesoftware.code-spell-checker",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "streetsidesoftware.code-spell-checker",
+      "targets": {}
+    },
+    "extension.timonwong.shellcheck": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "timonwong.shellcheck",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "timonwong.shellcheck",
+      "targets": {}
+    },
+    "extension.tomoki1207.pdf": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "tomoki1207.pdf",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "tomoki1207.pdf",
+      "targets": {}
+    },
+    "extension.waderyan.gitblame": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "waderyan.gitblame",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "waderyan.gitblame",
+      "targets": {}
+    },
+    "extension.yzhang.markdown-all-in-one": {
+      "blockers": [],
+      "discovery": {
+        "hosts": "windows,wsl",
+        "locator": "yzhang.markdown-all-in-one",
+        "provider": "vscode-marketplace"
+      },
+      "kind": "extension",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "yzhang.markdown-all-in-one",
+      "targets": {}
+    },
+    "git_credential": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "configuration",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "git_identity": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "configuration",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "go": {
+      "blockers": [],
+      "discovery": {
+        "locator": "go.dev",
+        "provider": "go-stable"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "asdf",
+        "asdf-golang"
+      ],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "graphify_cli": {
+      "blockers": [],
+      "discovery": {
+        "binary": "graphify",
+        "locator": "graphifyy",
+        "provider": "pypi-tool"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "uv"
+      ],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "infracost": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "infracost-linux-{arch}.tar.gz",
+        "binary": "infracost",
+        "locator": "infracost/cli",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "infracost/cli",
+      "targets": {}
+    },
+    "kubeconform": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "kubeconform-linux-{arch}.tar.gz",
+        "binary": "kubeconform",
+        "locator": "yannh/kubeconform",
+        "provider": "github-release",
+        "version_arg": "-v"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "yannh/kubeconform",
+      "targets": {}
+    },
+    "lazydocker": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "asset": "lazydocker_{version}_Linux_{release_arch}.tar.gz",
+        "binary": "lazydocker",
+        "locator": "jesseduffield/lazydocker",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "lazygit": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "lazygit_{version}_linux_{release_arch}.tar.gz",
+        "binary": "lazygit",
+        "locator": "jesseduffield/lazygit",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "jesseduffield/lazygit",
+      "targets": {}
+    },
+    "markdownlint_cli2": {
+      "blockers": [],
+      "discovery": {
+        "archive": "npm-lock",
+        "binary": "markdownlint-cli2",
+        "locator": "markdownlint-cli2",
+        "provider": "npm"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "nodejs",
+        "npm",
+        "nvm"
+      ],
+      "source": "markdownlint-cli2",
+      "targets": {}
+    },
+    "mcp.atlassian_read": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "atlassian_read",
+      "targets": {}
+    },
+    "mcp.aws_knowledge": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "aws_knowledge",
+      "targets": {}
+    },
+    "mcp.boost_graph": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "boost_graph",
+      "targets": {}
+    },
+    "mcp.context7": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "context7",
+      "targets": {}
+    },
+    "mcp.github": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "service",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "github",
+      "targets": {}
+    },
+    "mcp.gitlab_read": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "gitlab_read",
+      "targets": {}
+    },
+    "mcp.microsoft_learn": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "integration",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "microsoft_learn",
+      "targets": {}
+    },
+    "mermaid_cli": {
+      "blockers": [],
+      "discovery": {
+        "archive": "npm-lock",
+        "binary": "mmdc",
+        "locator": "@mermaid-js/mermaid-cli",
+        "provider": "npm"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "nodejs",
+        "npm",
+        "nvm",
+        "chrome_headless"
+      ],
+      "source": "@mermaid-js/mermaid-cli",
+      "targets": {}
+    },
+    "nodejs": {
+      "blockers": [],
+      "discovery": {
+        "locator": "nodejs.org",
+        "provider": "node-lts"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "nvm"
+      ],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "npm": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "binary": "package/bin/npm-cli.js",
+        "locator": "npm",
+        "provider": "npm"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "nodejs",
+        "nvm"
+      ],
+      "source": "npm",
+      "targets": {}
+    },
+    "nvm": {
+      "blockers": [],
+      "discovery": {
+        "locator": "nvm-sh/nvm",
+        "provider": "github-release"
+      },
+      "kind": "git-source",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "nvm-sh/nvm",
+      "targets": {}
+    },
+    "obsidian": {
+      "blockers": [],
+      "discovery": {
+        "archive": "deb",
+        "asset": "obsidian_{version}_{arch}.deb",
+        "binary": "obsidian",
+        "locator": "obsidianmd/obsidian-releases",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "os.bash-completion": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "bash-completion",
+      "targets": {}
+    },
+    "os.bind9-dnsutils": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "bind9-dnsutils|dnsutils",
+      "targets": {}
+    },
+    "os.bubblewrap": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "bubblewrap",
+      "targets": {}
+    },
+    "os.build-essential": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "build-essential",
+      "targets": {}
+    },
+    "os.ca-certificates": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "ca-certificates",
+      "targets": {}
+    },
+    "os.cmake": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "cmake",
+      "targets": {}
+    },
+    "os.curl": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "curl",
+      "targets": {}
+    },
+    "os.docx2txt": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "docx2txt",
+      "targets": {}
+    },
+    "os.duf": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "duf",
+      "targets": {}
+    },
+    "os.eza": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "eza",
+      "targets": {}
+    },
+    "os.fd-find": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "fd-find",
+      "targets": {}
+    },
+    "os.ffmpeg": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "ffmpeg",
+      "targets": {}
+    },
+    "os.fontconfig": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "fontconfig",
+      "targets": {}
+    },
+    "os.fzf": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "fzf",
+      "targets": {}
+    },
+    "os.gh": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "gh",
+      "targets": {}
+    },
+    "os.ghostscript": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "ghostscript",
+      "targets": {}
+    },
+    "os.git": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "git",
+      "targets": {}
+    },
+    "os.git-lfs": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "git-lfs",
+      "targets": {}
+    },
+    "os.glances": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "glances",
+      "targets": {}
+    },
+    "os.imagemagick": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "imagemagick",
+      "targets": {}
+    },
+    "os.inkscape": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "inkscape",
+      "targets": {}
+    },
+    "os.jq": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "jq",
+      "targets": {}
+    },
+    "os.libimage-exiftool-perl": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "libimage-exiftool-perl",
+      "targets": {}
+    },
+    "os.libreoffice": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "libreoffice",
+      "targets": {}
+    },
+    "os.librsvg2-bin": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "librsvg2-bin",
+      "targets": {}
+    },
+    "os.lshw": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "lshw",
+      "targets": {}
+    },
+    "os.lsof": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "lsof",
+      "targets": {}
+    },
+    "os.magic-wormhole": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "magic-wormhole",
+      "targets": {}
+    },
+    "os.moreutils": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "moreutils",
+      "targets": {}
+    },
+    "os.mtr-tiny": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "mtr-tiny",
+      "targets": {}
+    },
+    "os.netcat-openbsd": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "netcat-openbsd",
+      "targets": {}
+    },
+    "os.pandoc": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "pandoc",
+      "targets": {}
+    },
+    "os.pipx": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "pipx",
+      "targets": {}
+    },
+    "os.pkg-config": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "pkg-config",
+      "targets": {}
+    },
+    "os.poppler-utils": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "poppler-utils",
+      "targets": {}
+    },
+    "os.python3": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3",
+      "targets": {}
+    },
+    "os.python3-bs4": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-bs4",
+      "targets": {}
+    },
+    "os.python3-dev": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-dev",
+      "targets": {}
+    },
+    "os.python3-docx": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-docx",
+      "targets": {}
+    },
+    "os.python3-jsonschema": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-jsonschema",
+      "targets": {}
+    },
+    "os.python3-lxml": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-lxml",
+      "targets": {}
+    },
+    "os.python3-openpyxl": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-openpyxl",
+      "targets": {}
+    },
+    "os.python3-pil": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-pil",
+      "targets": {}
+    },
+    "os.python3-pip": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-pip",
+      "targets": {}
+    },
+    "os.python3-requests": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-requests",
+      "targets": {}
+    },
+    "os.python3-venv": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-venv",
+      "targets": {}
+    },
+    "os.python3-yaml": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "python3-yaml",
+      "targets": {}
+    },
+    "os.qpdf": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "qpdf",
+      "targets": {}
+    },
+    "os.ripgrep": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "ripgrep",
+      "targets": {}
+    },
+    "os.rsync": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "rsync",
+      "targets": {}
+    },
+    "os.shellcheck": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "shellcheck",
+      "targets": {}
+    },
+    "os.shfmt": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "shfmt",
+      "targets": {}
+    },
+    "os.sqlite3": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "sqlite3",
+      "targets": {}
+    },
+    "os.stow": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "stow",
+      "targets": {}
+    },
+    "os.strace": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "strace",
+      "targets": {}
+    },
+    "os.tesseract-ocr": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "tesseract-ocr",
+      "targets": {}
+    },
+    "os.tmux": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "tmux",
+      "targets": {}
+    },
+    "os.tree": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "tree",
+      "targets": {}
+    },
+    "os.unp": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "unp",
+      "targets": {}
+    },
+    "os.unzip": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "unzip",
+      "targets": {}
+    },
+    "os.wslu": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "wslu",
+      "targets": {}
+    },
+    "os.xdg-utils": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "xdg-utils",
+      "targets": {}
+    },
+    "os.xlsx2csv": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "xlsx2csv",
+      "targets": {}
+    },
+    "os.xmlstarlet": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "xmlstarlet",
+      "targets": {}
+    },
+    "os.zip": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "zip",
+      "targets": {}
+    },
+    "os.zoxide": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "distro",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "zoxide",
+      "targets": {}
+    },
+    "portainer": {
+      "blockers": [],
+      "discovery": {
+        "locator": "portainer/portainer-ce",
+        "provider": "portainer-lts"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [
+        "docker"
+      ],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "powershell": {
+      "blockers": [],
+      "discovery": {
+        "archive": "deb",
+        "asset": "powershell_{version}-1.deb_{arch}.deb",
+        "binary": "pwsh",
+        "locator": "PowerShell/PowerShell",
+        "provider": "github-release"
+      },
+      "kind": "vendor-apt",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "python": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "group",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "python.coverage": {
+      "blockers": [],
+      "discovery": {
+        "locator": "coverage",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "coverage",
+      "targets": {}
+    },
+    "python.httpx": {
+      "blockers": [],
+      "discovery": {
+        "locator": "httpx",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "httpx",
+      "targets": {}
+    },
+    "python.mcp": {
+      "blockers": [],
+      "discovery": {
+        "locator": "mcp",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "mcp",
+      "targets": {}
+    },
+    "python.mypy": {
+      "blockers": [],
+      "discovery": {
+        "locator": "mypy",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "mypy",
+      "targets": {}
+    },
+    "python.pip": {
+      "blockers": [],
+      "discovery": {
+        "locator": "pip",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "pip",
+      "targets": {}
+    },
+    "python.pyyaml": {
+      "blockers": [],
+      "discovery": {
+        "locator": "pyyaml",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "pyyaml",
+      "targets": {}
+    },
+    "python.ruff": {
+      "blockers": [],
+      "discovery": {
+        "locator": "ruff",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "ruff",
+      "targets": {}
+    },
+    "python.tomli": {
+      "blockers": [],
+      "discovery": {
+        "locator": "tomli",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "tomli",
+      "targets": {}
+    },
+    "python.tomlkit": {
+      "blockers": [],
+      "discovery": {
+        "locator": "tomlkit",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "tomlkit",
+      "targets": {}
+    },
+    "python.types-pyyaml": {
+      "blockers": [],
+      "discovery": {
+        "locator": "types-pyyaml",
+        "provider": "pypi"
+      },
+      "kind": "python-package",
+      "owner": "agentbot",
+      "requires": [
+        "python.pip"
+      ],
+      "source": "types-pyyaml",
+      "targets": {}
+    },
+    "skill-source.akindu-agent-skills": {
+      "blockers": [],
+      "discovery": {
+        "locator": "Akindu23/my-agent-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "Akindu23/my-agent-skills",
+      "targets": {}
+    },
+    "skill-source.archify": {
+      "blockers": [],
+      "discovery": {
+        "locator": "tt-a1i/archify",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "tt-a1i/archify",
+      "targets": {}
+    },
+    "skill-source.claude-devops": {
+      "blockers": [],
+      "discovery": {
+        "locator": "jeffallan/claude-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "jeffallan/claude-skills",
+      "targets": {}
+    },
+    "skill-source.claudex-loop": {
+      "blockers": [],
+      "discovery": {
+        "locator": "chaseai-yt/claudex-loop",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "chaseai-yt/claudex-loop",
+      "targets": {}
+    },
+    "skill-source.devops-anmol": {
+      "blockers": [],
+      "discovery": {
+        "locator": "anmolnagpal/devops-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "anmolnagpal/devops-skills",
+      "targets": {}
+    },
+    "skill-source.gitlab-ci-official": {
+      "blockers": [],
+      "discovery": {
+        "locator": "gitlab-org/ci-cd/gitlab-ci-skill",
+        "provider": "gitlab-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "gitlab.com/gitlab-org/ci-cd/gitlab-ci-skill",
+      "targets": {}
+    },
+    "skill-source.humanizer": {
+      "blockers": [],
+      "discovery": {
+        "locator": "blader/humanizer",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "blader/humanizer",
+      "targets": {}
+    },
+    "skill-source.oaustegard-skills": {
+      "blockers": [],
+      "discovery": {
+        "locator": "oaustegard/claude-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "oaustegard/claude-skills",
+      "targets": {}
+    },
+    "skill-source.obsidian": {
+      "blockers": [],
+      "discovery": {
+        "locator": "kepano/obsidian-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "kepano/obsidian-skills",
+      "targets": {}
+    },
+    "skill-source.pamudu-agent-bootstrap-skills": {
+      "blockers": [],
+      "discovery": {
+        "locator": "PamuduW/agentbot_skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "PamuduW/agentbot_skills",
+      "targets": {}
+    },
+    "skill-source.research-papers": {
+      "blockers": [],
+      "discovery": {
+        "locator": "ShaishavMaisuria/research-paper-lifecycle-skills",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "ShaishavMaisuria/research-paper-lifecycle-skills",
+      "targets": {}
+    },
+    "skill-source.simple-english": {
+      "blockers": [],
+      "discovery": {
+        "locator": "AminBlg/SimpleEnglish",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "AminBlg/SimpleEnglish",
+      "targets": {}
+    },
+    "skill-source.superpowers": {
+      "blockers": [],
+      "discovery": {
+        "locator": "obra/superpowers",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "obra/superpowers",
+      "targets": {}
+    },
+    "skill-source.vibe-wise": {
+      "blockers": [],
+      "discovery": {
+        "locator": "nykooi1/vibe-wise",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "nykooi1/vibe-wise",
+      "targets": {}
+    },
+    "skill-source.watermarks-remover": {
+      "blockers": [],
+      "discovery": {
+        "locator": "guillaumemeyer/watermarks-remover",
+        "provider": "github-source"
+      },
+      "kind": "git-source",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "guillaumemeyer/watermarks-remover",
+      "targets": {}
+    },
+    "skills_cli": {
+      "blockers": [],
+      "discovery": {
+        "archive": "npm-lock",
+        "binary": "skills",
+        "locator": "skills",
+        "provider": "npm"
+      },
+      "kind": "software",
+      "owner": "agentbot",
+      "requires": [
+        "nodejs",
+        "npm",
+        "nvm"
+      ],
+      "source": "skills",
+      "targets": {}
+    },
+    "system_packages": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "group",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "tflint": {
+      "blockers": [],
+      "discovery": {
+        "archive": "zip",
+        "asset": "tflint_linux_{arch}.zip",
+        "binary": "tflint",
+        "locator": "terraform-linters/tflint",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "terraform-linters/tflint",
+      "targets": {}
+    },
+    "trivy": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "trivy_{version}_Linux-{arch_bits}.tar.gz",
+        "binary": "trivy",
+        "locator": "aquasecurity/trivy",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "aquasecurity/trivy",
+      "targets": {}
+    },
+    "ubuntu_sans_mono_fonts": {
+      "blockers": [],
+      "discovery": {
+        "archive": "zip",
+        "asset": "Ubuntu-Sans-Mono-fonts-v{version}.zip",
+        "binary": "fonts",
+        "locator": "canonical/Ubuntu-Sans-Mono-fonts",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "uv": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "asset": "uv-{triple}-unknown-linux-gnu.tar.gz",
+        "binary": "uv-{triple}-unknown-linux-gnu/uv",
+        "locator": "astral-sh/uv",
+        "provider": "github-release"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "astral-sh/uv",
+      "targets": {}
+    },
+    "vale": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "vale_{version}_Linux_{arch_word}.tar.gz",
+        "binary": "vale",
+        "locator": "vale-cli/vale",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "vale-cli/vale",
+      "targets": {}
+    },
+    "wsl_conf": {
+      "blockers": [],
+      "discovery": {},
+      "kind": "configuration",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "component-registry",
+      "targets": {}
+    },
+    "yt_dlp": {
+      "blockers": [],
+      "discovery": {
+        "archive": "raw",
+        "asset": "yt-dlp_linux{aarch64_suffix}",
+        "binary": "yt-dlp",
+        "locator": "yt-dlp/yt-dlp",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "yt-dlp/yt-dlp",
+      "targets": {}
+    },
+    "zizmor": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar",
+        "asset": "zizmor-{triple}-unknown-linux-gnu.tar.gz",
+        "binary": "zizmor",
+        "locator": "zizmorcore/zizmor",
+        "provider": "github-release",
+        "version_arg": "--version"
+      },
+      "kind": "software",
+      "owner": "dotfiles",
+      "requires": [],
+      "source": "zizmorcore/zizmor",
+      "targets": {}
+    }
+  },
+  "generation": "initial-unqualified",
+  "required_targets": [
+    "linux-amd64"
+  ],
+  "schema_version": 1,
+  "sources": {
+    "agentbot": "55b1d40564244f307bebee80318d8e211e0232d7",
+    "dotfiles": "f31fccb875adb5435e48b6d7057b81b32236324c",
+    "dotfiles-shared": "874d56e05c5eb3b7424d80764981a5bd99548f55"
+  }
+}

@@ -60,6 +60,8 @@ jobs:
         run: shellcheck -x -e SC1091,SC2178,SC2313 $(find scripts tests -name '*.sh')
       - name: Formatting
         run: shfmt -d $(find scripts tests -name '*.sh')
+      - name: Catalog data parity
+        run: python3 scripts/render_catalog.py catalog --check
       - name: Ruff
         run: |
           ruff check scripts tests
@@ -126,6 +128,13 @@ jobs:
           repository: PamuduW/${{ matrix.consumer }}
           ref: ${{ github.ref_name }}
           path: ${{ matrix.consumer }}
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: matrix.consumer == 'agentbot'
+        with:
+          persist-credentials: false
+          repository: PamuduW/dotfiles
+          ref: ${{ github.ref_name }}
+          path: dotfiles
       # Only where the consumer's own workflow does. Dotfiles is a Bash product
       # whose suite uses the system interpreter; putting a tool-cache Python in
       # front of it is a difference from its own CI, and its bootstrap suite

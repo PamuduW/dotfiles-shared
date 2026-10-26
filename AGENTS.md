@@ -10,8 +10,10 @@ script until that mechanism was retired.
 
 ## Working rules
 
-- This repository is canonical. Nothing here is generated, and no consumer
-  carries a second copy to reconcile.
+- This repository is canonical. No consumer carries a second copy to reconcile.
+  `catalog/software.json` is the authored software catalog. Generate
+  `catalog/software.tsv` only with `python3 scripts/render_catalog.py catalog`;
+  do not edit the TSV by hand. This is the only generated-data exception.
 - Keep the existing paths under `scripts/lib/shared/` and `tests/lib/shared/`.
   Consumers resolve a root and append these exact relative paths; moving a file
   breaks both of them.

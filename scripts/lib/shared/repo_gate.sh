@@ -59,3 +59,25 @@ repo_gate_adopt() {
 		_adopt_dst["$key"]="${_adopt_src[$key]}"
 	done
 }
+
+# Explicit qualification checks frozen sources instead of moving repository refs.
+# shellcheck disable=SC2034  # Populates the caller's result through a nameref.
+repo_gate_frozen() {
+	local repo_dir="$1" role="$2" result_name="$3" label="$4" shared_root selected_root
+	local -n frozen_result_ref="$result_name"
+	_repo_update_result_init "$result_name" "$repo_dir" "$label"
+	if [[ -z "${_SOFTWARE_CATALOG_QUALIFICATION_CONTEXT:-}" ]] || ! declare -F software_catalog_begin >/dev/null; then
+		return 1
+	fi
+	shared_root="$(software_catalog_qualification_source dotfiles-shared)" || return 1
+	if ! software_catalog_begin "$shared_root"; then
+		frozen_result_ref["reason"]=qualification-invalid
+		return 1
+	fi
+	selected_root="$(software_catalog_qualification_source "$role")" || return 1
+	[[ "$(realpath -e -- "$repo_dir")" == "$selected_root" ]] || return 1
+	frozen_result_ref["state"]=current
+	frozen_result_ref["reason"]=qualification-frozen
+	frozen_result_ref["safe"]=1
+	frozen_result_ref["outcome"]=current
+}
