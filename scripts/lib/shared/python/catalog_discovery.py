@@ -71,7 +71,7 @@ def fetch_metadata(url: str) -> Mapping[str, Any]:
     headers = {"User-Agent": "agentbot-software-catalog/1"}
     token = os.environ.get("CATALOG_GITHUB_TOKEN", "")
     if parsed.netloc == "api.github.com" and token:
-        if not re.fullmatch(r"[A-Za-z0-9_]+", token):
+        if len(token) > 8192 or not re.fullmatch(r"[A-Za-z0-9._~+/-]+=*", token):
             raise DiscoveryError("invalid catalog metadata credential format")
         headers["Authorization"] = "Bearer " + token
     request = urllib.request.Request(url, headers=headers)
