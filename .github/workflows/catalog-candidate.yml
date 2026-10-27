@@ -129,6 +129,29 @@ jobs:
                 bash "$1/dotfiles/scripts/catalog/qualify-behavior.sh" \
                   "$2/qualification-context.json" "$2/behavior-smoke.json"
             ' bash "$GITHUB_WORKSPACE" "$RUNNER_TEMP/catalog-output"
+      - name: Preserve user-tools smoke evidence and container scan
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: user-tools-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/catalog-output/user-tools-smoke.json
+            ${{ runner.temp }}/catalog-output/container-vulnerabilities.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve Linux font smoke evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: font-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/font-smoke.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve representative behavior evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: behavior-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/behavior-smoke.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Install vendor packages and exercise local applications
         run: |
           set -euo pipefail
@@ -178,29 +201,6 @@ jobs:
         with:
           name: integration-smoke-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/catalog-output/integration-smoke.json
-          if-no-files-found: error
-          retention-days: 7
-      - name: Preserve user-tools smoke evidence and container scan
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: user-tools-smoke-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            ${{ runner.temp }}/catalog-output/user-tools-smoke.json
-            ${{ runner.temp }}/catalog-output/container-vulnerabilities.json
-          if-no-files-found: error
-          retention-days: 7
-      - name: Preserve Linux font smoke evidence
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: font-smoke-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/catalog-output/font-smoke.json
-          if-no-files-found: error
-          retention-days: 7
-      - name: Preserve representative behavior evidence
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: behavior-smoke-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/catalog-output/behavior-smoke.json
           if-no-files-found: error
           retention-days: 7
       - name: Exercise the selected Docker daemon and Portainer lifecycle
