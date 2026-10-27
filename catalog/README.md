@@ -79,6 +79,30 @@ The behavior driver executes a Node program, compiles a Go program with network
 module resolution disabled, checks headless Chrome's DOM output, and renders a
 Mermaid SVG using the selected browser. These are representative checks, not
 complete feature coverage. Their separate receipts remain unapproved; Windows
-fonts, vendor applications, Docker/Portainer and editor extensions need their own
-qualification. Each new driver requires successful hosted execution before its
+fonts remain outside Linux qualification. Each new driver requires successful hosted execution before its
 results count as evidence.
+
+The vendor-package driver installs the selected deb packages twice in a separate
+container. It checks package ownership, exact versions and apt holds, runs a local
+PowerShell pipeline and checks for a visible Obsidian window under Xvfb. It does
+not start Docker or certify Portainer.
+
+The integration driver uses a checksum-verified full Linux VS Code desktop client
+as an external test prerequisite. It applies the selected Linux extension closures
+and settings twice through normal Agentbot operations, checks owned versions, and
+verifies pinned skill-source selection, copied content and provenance on repeat.
+It does not run inference or authenticate agent clients. The standalone server
+archive omits client-side language extensions required by some selected packages.
+
+The tooling driver also installs the complete frozen Python development closure
+in a separate environment, checks exact distributions after fresh/repeat installs,
+and runs Ruff, mypy and all Python test modules with those dependencies.
+
+A final Docker lifecycle driver runs only with explicit disposable-host opt-in
+and GitHub-hosted Ubuntu guards. After the container checks finish, it removes the
+runner's preinstalled Docker packages so they cannot satisfy fresh coverage, then
+uses the normal selected Docker/Portainer installers. It checks the daemon, exact
+image, local status API, repeat installation and synthetic volume-data survival
+after an injected replacement failure. This driver must never run on a user's
+machine. Each driver emits partial unapproved evidence; none supplies an approved
+baseline upgrade or authorizes publication.

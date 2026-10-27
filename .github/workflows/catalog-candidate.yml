@@ -202,6 +202,23 @@ jobs:
           path: ${{ runner.temp }}/catalog-output/behavior-smoke.json
           if-no-files-found: error
           retention-days: 7
+      - name: Exercise the selected Docker daemon and Portainer lifecycle
+        run: |
+          set -euo pipefail
+          env -i PATH=/usr/bin:/bin:/usr/sbin:/sbin USER="$(id -un)" LANG=C.UTF-8 \
+            HOME="$RUNNER_TEMP/catalog-tooling-home" GITHUB_ACTIONS=true \
+            RUNNER_ENVIRONMENT="$RUNNER_ENVIRONMENT" GITHUB_RUN_ID="$GITHUB_RUN_ID" \
+            GITHUB_WORKSPACE="$GITHUB_WORKSPACE" \
+            python3 dotfiles/scripts/catalog/qualify-docker.py \
+              "$RUNNER_TEMP/catalog-output/qualification-context.json" \
+              --disposable-host --output "$RUNNER_TEMP/catalog-output/docker-lifecycle-smoke.json"
+      - name: Preserve Docker lifecycle evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docker-lifecycle-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/docker-lifecycle-smoke.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Explain result
         if: always()
         run: |
@@ -215,6 +232,7 @@ jobs:
           Behavior smoke executes Node, compiles Go, checks Chrome DOM output and renders Mermaid SVG.
           Additional containers exercise vendor apt packages, PowerShell/Obsidian,
           Linux editor extensions and pinned skill-source content. Docker/Portainer lifecycle
-          and baseline upgrade/failure recovery still need separate coverage.
+          are exercised on the disposable hosted VM after all container tests.
+          Baseline upgrades and complete failure recovery still need separate coverage.
           Full installation scenarios and the protected publisher are still required.
           SUMMARY
