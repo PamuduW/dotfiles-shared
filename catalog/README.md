@@ -106,3 +106,35 @@ image, local status API, repeat installation and synthetic volume-data survival
 after an injected replacement failure. This driver must never run on a user's
 machine. Each driver emits partial unapproved evidence; none supplies an approved
 baseline upgrade or authorizes publication.
+
+The final smoke audit requires all seven evidence scopes, identical candidate and
+source identities, and fresh/repeat observations for every versioned Linux
+component, including the NVM and asdf Go Git sources. It checks dependency closure
+versions, extension ownership, skill provenance and the selected container image.
+Its result explicitly leaves baseline upgrades, complete failure safety, all
+updater controls and full product gates unqualified. The full approval validator
+rejects this partial audit format.
+
+`python3 scripts/catalog/publication-status.py REVIEWED-POLICY.json` is a
+read-only GitHub evidence reader and publication planner. Its policy supplies the
+exact repository/workflow/run/attempt, candidate and trusted reusable-workflow
+commits, expected source/base heads, required jobs/steps and publisher App ID.
+The policy must come from reviewed controller configuration, never an artifact.
+The reader accepts only bounded GitHub GET responses and a checksum-verified
+`receipt.json` ZIP envelope naming the same candidate, workflow, attempt and
+approved predecessor. Partial smoke artifacts cannot authorize its plan.
+
+The planner checks classic branch protection, current human review requirements,
+strict App-owned status checks, no review/admin bypass, and no force pushes or
+branch deletion. Personal repositories do not need organization-only push
+restrictions. Organization repositories require the configured sole publisher
+App. Ruleset-based protection needs a separate verifier and currently holds.
+The repository must already have an approved predecessor and automatic promotion
+enabled through a reviewed change. A missing seed, protection or complete result
+produces `status: held` and `published: false`.
+
+A successful unit fixture produces an immutable plan containing only the two
+approval proof files, bound to candidate content and live heads. It performs no
+remote writes. The App writer, candidate preparer, trusted reusable qualification
+workflow and complete baseline-upgrade evidence are still required; this command
+cannot publish or enable the current unapproved seed.

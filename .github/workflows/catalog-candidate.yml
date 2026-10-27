@@ -219,6 +219,27 @@ jobs:
           path: ${{ runner.temp }}/catalog-output/docker-lifecycle-smoke.json
           if-no-files-found: error
           retention-days: 7
+      - name: Audit complete fresh and repeat inventory coverage
+        run: |
+          set -euo pipefail
+          env -i PATH=/usr/bin:/bin LANG=C.UTF-8 \
+            python3 dotfiles-shared/scripts/catalog/audit-smoke.py \
+              "$RUNNER_TEMP/catalog-output/qualification-context.json" \
+              --receipt "$RUNNER_TEMP/catalog-tooling-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/user-tools-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/vendor-package-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/font-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/behavior-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/integration-smoke.json" \
+              --receipt "$RUNNER_TEMP/catalog-output/docker-lifecycle-smoke.json" \
+              --output "$RUNNER_TEMP/catalog-output/inventory-smoke-audit.json"
+      - name: Preserve fresh and repeat inventory audit
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: inventory-smoke-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/inventory-smoke-audit.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Explain result
         if: always()
         run: |
@@ -234,5 +255,7 @@ jobs:
           Linux editor extensions and pinned skill-source content. Docker/Portainer lifecycle
           are exercised on the disposable hosted VM after all container tests.
           Baseline upgrades and complete failure recovery still need separate coverage.
-          Full installation scenarios and the protected publisher are still required.
+          An inventory audit requires all selected Linux component observations and matching sources.
+          It explicitly leaves baseline upgrades, full failure safety, product gates and
+          all updater controls unqualified. The protected publisher is still required.
           SUMMARY
