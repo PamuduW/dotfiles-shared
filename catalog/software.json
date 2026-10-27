@@ -1829,7 +1829,9 @@
       },
       "kind": "python-package",
       "owner": "agentbot",
-      "requires": [],
+      "requires": [
+        "python_runtime"
+      ],
       "source": "pip",
       "targets": {}
     },
@@ -1901,6 +1903,21 @@
         "python.pip"
       ],
       "source": "types-pyyaml",
+      "targets": {}
+    },
+    "python_runtime": {
+      "blockers": [],
+      "discovery": {
+        "archive": "tar.gz",
+        "binary": "python/bin/python3.12",
+        "constraint": "3.12",
+        "locator": "astral-sh/python-build-standalone",
+        "provider": "python-standalone"
+      },
+      "kind": "software",
+      "owner": "agentbot",
+      "requires": [],
+      "source": "astral-sh/python-build-standalone",
       "targets": {}
     },
     "skill-source.akindu-agent-skills": {

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -121,6 +122,23 @@ def _skill_evidence(selected, receipt):
     )
     installed = set()
     for identity, (component, artifact) in selected.items():
+        discovery = component["discovery"]
+        provider = discovery.get("provider")
+        _require(provider in {"github-source", "gitlab-source"}, "unsupported skill publisher")
+        host, source_type = (
+            ("gitlab.com", "gitlab") if provider == "gitlab-source" else ("github.com", "github")
+        )
+        locator = discovery.get("locator", "")
+        _require(
+            isinstance(locator, str)
+            and re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+", locator) is not None
+            and all(part not in {".", ".."} for part in locator.split("/"))
+            and component["source"]
+            in (
+                {locator, host + "/" + locator} if host == "github.com" else {host + "/" + locator}
+            ),
+            "skill source differs from its declared publisher",
+        )
         source = sources[identity]
         _require(
             isinstance(source, dict)
@@ -141,8 +159,8 @@ def _skill_evidence(selected, receipt):
                 isinstance(proof, dict)
                 and proof.get("source") == component["source"]
                 and proof.get("sourceRevision") == artifact["revision"]
-                and proof.get("sourceType") == "github"
-                and proof.get("sourceUrl") == f"https://github.com/{component['source']}.git"
+                and proof.get("sourceType") == source_type
+                and proof.get("sourceUrl") == f"https://{host}/{locator}.git"
                 and isinstance(proof.get("skillFolderHash"), str)
                 and re.fullmatch(r"[0-9a-f]{64}", proof["skillFolderHash"]) is not None,
                 "skill content/provenance evidence differs from its frozen source",
@@ -158,7 +176,17 @@ def _partition(snapshot):
     _require(bool(expected), "empty inventory cannot pass smoke coverage")
     groups = {
         key: {}
-        for key in ("user", "vendor", "python", "extension", "skill", "font", "oci", "tooling")
+        for key in (
+            "user",
+            "vendor",
+            "python",
+            "extension",
+            "skill",
+            "font",
+            "oci",
+            "tooling",
+            "sdk",
+        )
     }
     observations = {}
     for observation, (key, target) in expected.items():
@@ -174,6 +202,8 @@ def _partition(snapshot):
             and key.startswith("skill-source.")
         ):
             groups["skill"][key.removeprefix("skill-source.")] = (entry, artifact)
+        elif entry["owner"] == "agentbot" and key == "python_runtime":
+            groups["sdk"][key] = artifact
         elif entry["owner"] == "agentbot" and key == "skills_cli":
             groups["tooling"][key] = artifact
         elif entry["owner"] == "dotfiles" and (
@@ -237,6 +267,24 @@ def audit_smoke(snapshot, receipts):
             field = "local_pipeline_json" if name == "powershell" else "xvfb_visible_window"
             _successes(probe, (field,))
     _successes(tooling, ("fresh", "repeat"))
+    for artifact in groups["sdk"].values():
+        proof = _mapping(tooling.get("python_runtime", {}))
+        expected = {
+            "version": artifact["version"],
+            "artifact_digest": artifact["digest"],
+            "identity": hashlib.sha256(
+                json.dumps(dict(artifact), sort_keys=True).encode()
+            ).hexdigest(),
+            "actual_version": artifact["version"].split("+", 1)[0],
+            "implementation": "cpython",
+            "owned": True,
+            "fresh": "success",
+            "repeat": "success",
+        }
+        _require(
+            proof == expected and proof.get("owned") is True,
+            "private Python runtime differs from its selected owned build",
+        )
     development = _mapping(tooling.get("development", {}))
     _mapping(development.get("packages", {}))
     _successes(development, ("fresh", "repeat", "ruff", "mypy", "python_suite"))

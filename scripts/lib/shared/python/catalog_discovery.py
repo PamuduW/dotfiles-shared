@@ -33,6 +33,7 @@ _OWNER_PROVIDERS = frozenset(
         "pypi-tool",
         "docker-apt",
         "portainer-lts",
+        "python-standalone",
     }
 )
 
@@ -778,8 +779,10 @@ def _resolve_owned_targets(snapshot, key, entry, targets, python_resolver, runti
         return _resolve_python_targets(snapshot, entry, targets, python_resolver, locks)
     if provider not in _OWNER_PROVIDERS:
         return None
-    if entry["owner"] != "dotfiles" or entry["kind"] not in {"software", "vendor-apt"}:
-        raise DiscoveryError("native runtime discovery requires its owning Dotfiles software entry")
+    owner = "agentbot" if provider == "python-standalone" else "dotfiles"
+    kinds = {"software"} if provider == "python-standalone" else {"software", "vendor-apt"}
+    if entry["owner"] != owner or entry["kind"] not in kinds:
+        raise DiscoveryError("native runtime discovery requires its owning software entry")
     artifacts = {}
     for target in sorted(set(targets)):
         artifact = runtime_resolver(key, entry["discovery"], target)

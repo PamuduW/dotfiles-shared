@@ -94,6 +94,16 @@ verifies pinned skill-source selection, copied content and provenance on repeat.
 It does not run inference or authenticate agent clients. The standalone server
 archive omits client-side language extensions required by some selected packages.
 
+Agentbot's `python_runtime` component selects the relocatable CPython 3.12 ABI
+used by the Python locks. Discovery freezes the publisher's exact build date,
+version, archive URL and SHA-256. Agentbot installs it under a private catalog
+cache, verifies payload ownership/integrity and physical runtime identity, and
+uses it for both runtime and development environments. OS Python packages stay
+distro-managed. The tooling receipt and inventory audit bind this SDK to the
+same candidate; changing its identity rebuilds the environment. Agentbot's
+private Node/npm dependency similarly uses the qualified Dotfiles installer in
+an isolated home, without requiring public Node or NVM ownership.
+
 The tooling driver also installs the complete frozen Python development closure
 in a separate environment, checks exact distributions after fresh/repeat installs,
 and runs Ruff, mypy and all Python test modules with those dependencies.

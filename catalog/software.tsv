@@ -1,4 +1,4 @@
-#software-catalog-v1	eb552668ce5208fd010cb75744a05472436ac65435588425374765ceda17fa45
+#software-catalog-v1	27452880b426915a829432d9e90bd03488a7adb8755797e0cc2c6c4cf0d61179
 antigravity_cli	owner	any	dotfiles
 antigravity_cli	kind	any	software
 antigravity_cli	source	any	component-registry
@@ -774,6 +774,14 @@ python.types-pyyaml	kind	any	python-package
 python.types-pyyaml	source	any	types-pyyaml
 python.types-pyyaml	discovery.locator	any	types-pyyaml
 python.types-pyyaml	discovery.provider	any	pypi
+python_runtime	owner	any	agentbot
+python_runtime	kind	any	software
+python_runtime	source	any	astral-sh/python-build-standalone
+python_runtime	discovery.archive	any	tar.gz
+python_runtime	discovery.binary	any	python/bin/python3.12
+python_runtime	discovery.constraint	any	3.12
+python_runtime	discovery.locator	any	astral-sh/python-build-standalone
+python_runtime	discovery.provider	any	python-standalone
 skill-source.akindu-agent-skills	owner	any	agentbot
 skill-source.akindu-agent-skills	kind	any	git-source
 skill-source.akindu-agent-skills	source	any	Akindu23/my-agent-skills

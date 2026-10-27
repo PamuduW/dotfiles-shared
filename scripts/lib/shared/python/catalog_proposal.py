@@ -121,11 +121,19 @@ def _bootstrap_diagnostic(path):
 def _agentbot_resolvers(snapshot, root, locks, tools, uv_version):
     _verify_source("agentbot", root, snapshot.data["sources"]["agentbot"])
     sys.path.insert(0, str(root))
-    from src import catalog_extension_discovery, catalog_python_discovery
+    from src import (
+        catalog_extension_discovery,
+        catalog_python_discovery,
+        catalog_python_runtime_discovery,
+    )
 
     if any(
         not Path(module.__file__).resolve().is_relative_to(root)
-        for module in (catalog_extension_discovery, catalog_python_discovery)
+        for module in (
+            catalog_extension_discovery,
+            catalog_python_discovery,
+            catalog_python_runtime_discovery,
+        )
     ):
         raise CatalogError("candidate resolver was imported from a different Agentbot source")
     return (
@@ -133,6 +141,7 @@ def _agentbot_resolvers(snapshot, root, locks, tools, uv_version):
         catalog_python_discovery.PythonCandidateResolver(
             root, locks, uv=tools["uv"], uv_version=uv_version
         ).resolve,
+        catalog_python_runtime_discovery.resolve_python_runtime,
     )
 
 
@@ -170,9 +179,18 @@ def propose(catalog, roots, output, *, seed=False):
             for name in ("nodejs", "npm", "uv")
         }
         locks = {}
-        extension, python = _agentbot_resolvers(
+        extension, python, python_runtime = _agentbot_resolvers(
             basis, roots["agentbot"], locks, tools, selected["uv"]
         )
+        native = runtime_resolver(
+            roots["dotfiles"], basis, tools["uv"], locks, require_approved=False
+        )
+
+        def owned_runtime(key, discovery, target):
+            if discovery["provider"] == "python-standalone":
+                return python_runtime(discovery, target)
+            return native(key, discovery, target)
+
         candidate = build_candidate(
             basis,
             locks=locks,
@@ -184,9 +202,7 @@ def propose(catalog, roots, output, *, seed=False):
             },
             extension_resolver=extension,
             python_resolver=python,
-            runtime_resolver=runtime_resolver(
-                roots["dotfiles"], basis, tools["uv"], locks, require_approved=False
-            ),
+            runtime_resolver=owned_runtime,
         )
         if seed:
             verify_bootstrap_tools(basis.data, candidate)
