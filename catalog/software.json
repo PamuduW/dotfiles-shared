@@ -907,7 +907,8 @@
       "kind": "software",
       "owner": "dotfiles",
       "requires": [
-        "uv"
+        "uv",
+        "python_runtime"
       ],
       "source": "component-registry",
       "targets": {}

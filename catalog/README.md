@@ -96,8 +96,8 @@ archive omits client-side language extensions required by some selected packages
 
 Agentbot's `python_runtime` component selects the relocatable CPython 3.12 ABI
 used by the Python locks. Discovery freezes the publisher's exact build date,
-version, archive URL and SHA-256. Agentbot installs it under a private catalog
-cache, verifies payload ownership/integrity and physical runtime identity, and
+version, archive URL and SHA-256. Agentbot installs it under private application
+data, verifies payload ownership/integrity and physical runtime identity, and
 uses it for both runtime and development environments. OS Python packages stay
 distro-managed. The tooling receipt and inventory audit bind this SDK to the
 same candidate; changing its identity rebuilds the environment. Agentbot's

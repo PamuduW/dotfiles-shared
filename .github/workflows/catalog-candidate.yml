@@ -162,6 +162,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE/agentbot:$GITHUB_WORKSPACE/agentbot:ro" \
             --volume "$GITHUB_WORKSPACE/dotfiles-shared:$GITHUB_WORKSPACE/dotfiles-shared:ro" \
             --volume "$RUNNER_TEMP/catalog-output:$RUNNER_TEMP/catalog-output" \
+            --volume "$RUNNER_TEMP/catalog-tooling-home/.local/share/software-catalog/python-runtime:$RUNNER_TEMP/catalog-tooling-home/.local/share/software-catalog/python-runtime:ro" \
             "$image" bash -c '
               set -euo pipefail
               bash "$1/dotfiles/scripts/catalog/bootstrap-tools.sh" \
