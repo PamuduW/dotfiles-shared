@@ -72,3 +72,13 @@ and no Docker socket or credentials are mounted. A pinned Trivy runs a container
 filesystem scan and records findings; the scan report does not certify an absence
 of vulnerabilities. This driver and its separate `user-tools-smoke` artifact
 remain partial evidence, not full qualification or permission to publish.
+
+The Linux font smoke driver separately checks fresh/repeat installation,
+fontconfig registration and matching of the installed Ubuntu Sans Mono family.
+The behavior driver executes a Node program, compiles a Go program with network
+module resolution disabled, checks headless Chrome's DOM output, and renders a
+Mermaid SVG using the selected browser. These are representative checks, not
+complete feature coverage. Their separate receipts remain unapproved; Windows
+fonts, vendor applications, Docker/Portainer and editor extensions need their own
+qualification. Each new driver requires successful hosted execution before its
+results count as evidence.

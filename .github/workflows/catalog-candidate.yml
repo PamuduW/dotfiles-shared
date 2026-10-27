@@ -120,6 +120,14 @@ jobs:
                 HOME=/home/op/test-home USER=op LANG=C.UTF-8 \
                 python3 "$1/dotfiles/scripts/catalog/qualify-user-tools.py" \
                   "$2/qualification-context.json" --output "$2/user-tools-smoke.json"
+              env -i PATH=/home/op/test-home/.local/bin:/usr/bin:/bin \
+                HOME=/home/op/test-home USER=op LANG=C.UTF-8 \
+                bash "$1/dotfiles/scripts/catalog/qualify-fonts.sh" \
+                  "$2/qualification-context.json" "$2/font-smoke.json"
+              env -i PATH=/home/op/test-home/.local/bin:/usr/bin:/bin \
+                HOME=/home/op/test-home USER=op LANG=C.UTF-8 \
+                bash "$1/dotfiles/scripts/catalog/qualify-behavior.sh" \
+                  "$2/qualification-context.json" "$2/behavior-smoke.json"
             ' bash "$GITHUB_WORKSPACE" "$RUNNER_TEMP/catalog-output"
       - name: Preserve user-tools smoke evidence and container scan
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -128,6 +136,20 @@ jobs:
           path: |
             ${{ runner.temp }}/catalog-output/user-tools-smoke.json
             ${{ runner.temp }}/catalog-output/container-vulnerabilities.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve Linux font smoke evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: font-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/font-smoke.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve representative behavior evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: behavior-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/behavior-smoke.json
           if-no-files-found: error
           retention-days: 7
       - name: Explain result
@@ -139,6 +161,8 @@ jobs:
           Tooling smoke tests cover real Node/npm/uv provisioning and fresh/repeat
           Agentbot Python and Skills CLI installs. They do not qualify the full inventory.
           A clean Ubuntu container also exercises fresh/repeat user-local tools.
-          Vendor apt packages, Docker/Portainer, fonts and editor extensions need separate coverage.
+          Linux font smoke verifies real registration and font matching; Windows fonts are outside scope.
+          Behavior smoke executes Node, compiles Go, checks Chrome DOM output and renders Mermaid SVG.
+          Vendor apt packages, Docker/Portainer and editor extensions need separate coverage.
           Full installation scenarios and the protected publisher are still required.
           SUMMARY
