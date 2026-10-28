@@ -152,6 +152,30 @@ jobs:
           path: ${{ runner.temp }}/catalog-output/behavior-smoke.json
           if-no-files-found: error
           retention-days: 7
+      - name: Migrate real legacy Node and Go installations
+        run: |
+          set -euo pipefail
+          image="catalog-user-tools:$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker run --rm --memory=4g --memory-swap=4g --cpus=2 --pids-limit=512 \
+            --workdir /home/op \
+            --volume "$GITHUB_WORKSPACE/dotfiles:$GITHUB_WORKSPACE/dotfiles:ro" \
+            --volume "$GITHUB_WORKSPACE/agentbot:$GITHUB_WORKSPACE/agentbot:ro" \
+            --volume "$GITHUB_WORKSPACE/dotfiles-shared:$GITHUB_WORKSPACE/dotfiles-shared:ro" \
+            --volume "$RUNNER_TEMP/catalog-output:$RUNNER_TEMP/catalog-output" \
+            "$image" bash -c '
+              set -euo pipefail
+              mkdir -m 700 /home/op/legacy-runtime-home
+              env -i PATH=/usr/bin:/bin HOME=/home/op/legacy-runtime-home USER=op LANG=C.UTF-8 \
+                bash "$1/dotfiles/scripts/catalog/qualify-legacy-runtimes.sh" \
+                  "$2/qualification-context.json" "$2/legacy-runtime-smoke.json"
+            ' bash "$GITHUB_WORKSPACE" "$RUNNER_TEMP/catalog-output"
+      - name: Preserve legacy runtime migration evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: legacy-runtime-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/legacy-runtime-smoke.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Install vendor packages and exercise local applications
         run: |
           set -euo pipefail
