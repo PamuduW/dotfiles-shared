@@ -6,23 +6,23 @@ import re
 from collections.abc import Mapping
 from pathlib import Path
 
-from software_catalog import CatalogError, CatalogSnapshot, _git, load_snapshot
+from catalog_git_source import read_git, verify_checkout
+from software_catalog import CatalogError, CatalogSnapshot, load_snapshot
 
 _SOURCES = frozenset({"agentbot", "dotfiles", "dotfiles-shared"})
 
 
 def _verify_source(name: str, root: Path, expected: str) -> None:
-    origin = _git(root, "remote", "get-url", "origin").removesuffix(".git")
+    origin = read_git(root, "remote", "get-url", "origin").removesuffix(".git")
     if origin not in {
         f"https://github.com/PamuduW/{name}",
         f"git@github.com:PamuduW/{name}",
         f"ssh://git@github.com/PamuduW/{name}",
     }:
         raise CatalogError(f"qualification source origin differs from its authority: {name}")
-    if _git(root, "rev-parse", "HEAD") != expected:
+    if read_git(root, "rev-parse", "HEAD") != expected:
         raise CatalogError(f"qualification source revision changed: {name}")
-    if _git(root, "status", "--porcelain=v1", "--untracked-files=all"):
-        raise CatalogError(f"qualification source is not clean: {name}")
+    verify_checkout(root, expected)
 
 
 def qualification_snapshot(

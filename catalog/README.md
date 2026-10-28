@@ -148,3 +148,12 @@ approval proof files, bound to candidate content and live heads. It performs no
 remote writes. The App writer, candidate preparer, trusted reusable qualification
 workflow and complete baseline-upgrade evidence are still required; this command
 cannot publish or enable the current unapproved seed.
+
+Source verification compares the declared Git commit, index and tracked file
+bytes, including executable bits and symlink targets. Hidden tracked edits do
+not qualify as clean. Verification reads Git objects without working-tree filters
+or fsmonitor. Normal ignored runtime/build caches are allowed for product roots;
+legacy Go plugin inventory requires no extra files. Partial source clones are
+held for reconciliation. An uninitialized submodule placeholder may be absent or
+empty with its recorded commit intact; populated submodules need separate source
+qualification and are held. Shared CONTRACT 9 is required by both consumers.

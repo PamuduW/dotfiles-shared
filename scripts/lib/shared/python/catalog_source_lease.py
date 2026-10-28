@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from catalog_context import _SOURCES
+from catalog_git_source import verify_checkout
 from software_catalog import CatalogError, CatalogSnapshot
 
 
@@ -87,8 +88,7 @@ def _verify_source(name: str, root: Path, revision: str, runner: Any) -> None:
         raise CatalogError("qualified source origin differs from its public authority")
     if _git(root, runner, "rev-parse", "HEAD") != revision:
         raise CatalogError("qualified source revision changed")
-    if _git(root, runner, "status", "--porcelain=v1", "--untracked-files=all"):
-        raise CatalogError("qualified source is not clean")
+    verify_checkout(root, revision)
 
 
 @contextmanager
