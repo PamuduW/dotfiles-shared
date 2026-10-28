@@ -225,6 +225,30 @@ jobs:
           path: ${{ runner.temp }}/catalog-output/vendor-package-smoke.json
           if-no-files-found: error
           retention-days: 7
+      - name: Migrate real legacy vendor packages
+        run: |
+          set -euo pipefail
+          image="catalog-vendor:$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          docker run --rm --memory=4g --memory-swap=4g --cpus=2 --pids-limit=512 \
+            --workdir /home/op \
+            --volume "$GITHUB_WORKSPACE/dotfiles:$GITHUB_WORKSPACE/dotfiles:ro" \
+            --volume "$GITHUB_WORKSPACE/agentbot:$GITHUB_WORKSPACE/agentbot:ro" \
+            --volume "$GITHUB_WORKSPACE/dotfiles-shared:$GITHUB_WORKSPACE/dotfiles-shared:ro" \
+            --volume "$RUNNER_TEMP/catalog-output:$RUNNER_TEMP/catalog-output" \
+            "$image" bash -c '
+              set -euo pipefail
+              mkdir -m 700 /home/op/legacy-vendor-home
+              env -i PATH=/usr/bin:/bin HOME=/home/op/legacy-vendor-home USER=op LANG=C.UTF-8 \
+                GITHUB_ACTIONS=true bash "$1/dotfiles/scripts/catalog/qualify-legacy-vendor.sh" \
+                  "$2/qualification-context.json" "$2/legacy-vendor-smoke.json"
+            ' bash "$GITHUB_WORKSPACE" "$RUNNER_TEMP/catalog-output"
+      - name: Preserve legacy vendor migration evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: legacy-vendor-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catalog-output/legacy-vendor-smoke.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Exercise real editor extensions and pinned skill sources
         run: |
           set -euo pipefail
