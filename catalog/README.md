@@ -63,6 +63,12 @@ seed run through the existing workflow:
 The default `checks` mode still runs the regression gates. `proposal` mode needs
 an approved baseline. These modes share the candidate implementation.
 
+The first seed uses the operator-approved GitHub PR extension 0.172.0 exception
+through `--seed --seed-compatible-pr-extension`. Its exact VSIX and dependency
+closure still undergo normal validation and installation tests. The exception
+is recorded in proposal metadata and is refused outside seed mode. Daily
+proposals continue resolving the latest extension.
+
 A separate clean Ubuntu 24.04 container extends smoke coverage to Dotfiles'
 user-local software. Selection comes from the frozen inventory; deb/OCI artifacts
 and fonts remain outside that driver. It installs each selected tool, verifies

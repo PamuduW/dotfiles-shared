@@ -52,7 +52,9 @@ jobs:
         run: |
           set -euo pipefail
           args=()
-          if [[ "$PREPARE_SEED" == 1 ]]; then args+=(--seed); fi
+          if [[ "$PREPARE_SEED" == 1 ]]; then
+            args+=(--seed --seed-compatible-pr-extension)
+          fi
           mkdir -m 700 "$RUNNER_TEMP/catalog-output"
           python3 dotfiles-shared/scripts/catalog/propose.py dotfiles-shared/catalog \
             --source "dotfiles-shared=$GITHUB_WORKSPACE/dotfiles-shared" \

@@ -21,6 +21,11 @@ def main() -> int:
     parser.add_argument(
         "--seed", action="store_true", help="explicitly prepare the first unapproved catalog"
     )
+    parser.add_argument(
+        "--seed-compatible-pr-extension",
+        action="store_true",
+        help="first seed only: use the approved PR extension compatibility exception",
+    )
     args = parser.parse_args()
     try:
         sources = {}
@@ -29,7 +34,13 @@ def main() -> int:
             if not separator or not path or name in sources:
                 raise CatalogError("source arguments require unique NAME=PATH identities")
             sources[name] = Path(path)
-        snapshot, changed = propose(args.catalog, sources, args.output, seed=args.seed)
+        snapshot, changed = propose(
+            args.catalog,
+            sources,
+            args.output,
+            seed=args.seed,
+            seed_compatible_pr_extension=args.seed_compatible_pr_extension,
+        )
         print(
             json.dumps(
                 {
@@ -38,6 +49,9 @@ def main() -> int:
                     "sources": dict(snapshot.data["sources"]),
                     "changed": changed,
                     "approved": False,
+                    "seed_exceptions": {"github.vscode-pull-request-github": "0.172.0"}
+                    if args.seed_compatible_pr_extension
+                    else {},
                 },
                 indent=2,
             )

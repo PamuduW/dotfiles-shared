@@ -118,7 +118,17 @@ def _bootstrap_diagnostic(path):
     ).strip()
 
 
-def _agentbot_resolvers(snapshot, root, locks, tools, uv_version):
+def _seed_extension_release(identity, platform):
+    if identity == "github.vscode-pull-request-github":
+        return "0.172.0", None
+    from src.catalog_extension_discovery import query_extension_release
+
+    return query_extension_release(identity, platform)
+
+
+def _agentbot_resolvers(
+    snapshot, root, locks, tools, uv_version, *, seed_compatible_pr_extension=False
+):
     _verify_source("agentbot", root, snapshot.data["sources"]["agentbot"])
     sys.path.insert(0, str(root))
     from src import (
@@ -137,7 +147,10 @@ def _agentbot_resolvers(snapshot, root, locks, tools, uv_version):
     ):
         raise CatalogError("candidate resolver was imported from a different Agentbot source")
     return (
-        catalog_extension_discovery.ExtensionCandidateResolver(locks).resolve,
+        catalog_extension_discovery.ExtensionCandidateResolver(
+            locks,
+            release_resolver=_seed_extension_release if seed_compatible_pr_extension else None,
+        ).resolve,
         catalog_python_discovery.PythonCandidateResolver(
             root, locks, uv=tools["uv"], uv_version=uv_version
         ).resolve,
@@ -145,8 +158,10 @@ def _agentbot_resolvers(snapshot, root, locks, tools, uv_version):
     )
 
 
-def propose(catalog, roots, output, *, seed=False):
+def propose(catalog, roots, output, *, seed=False, seed_compatible_pr_extension=False):
     """Generate data only; no branch, approval or stable catalog is changed."""
+    if seed_compatible_pr_extension and not seed:
+        raise CatalogError("PR extension compatibility exception is seed-only")
     output = Path(output)
     if output.exists() or output.is_symlink():
         raise CatalogError("candidate output already exists; preserving it")
@@ -180,7 +195,12 @@ def propose(catalog, roots, output, *, seed=False):
         }
         locks = {}
         extension, python, python_runtime = _agentbot_resolvers(
-            basis, roots["agentbot"], locks, tools, selected["uv"]
+            basis,
+            roots["agentbot"],
+            locks,
+            tools,
+            selected["uv"],
+            seed_compatible_pr_extension=seed_compatible_pr_extension,
         )
         native = runtime_resolver(
             roots["dotfiles"], basis, tools["uv"], locks, require_approved=False
