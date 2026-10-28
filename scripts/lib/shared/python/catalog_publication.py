@@ -10,10 +10,19 @@ import re
 import tempfile
 from pathlib import Path
 
-from catalog_github import PREFIX, REPOSITORY, SHA, GitHubError, read_qualification, validate_run
+from catalog_github import (
+    PREFIX,
+    REPOSITORY,
+    SHA,
+    GitHubError,
+    RunIdentity,
+    decode_json,
+    read_qualification,
+    validate_run,
+)
 from catalog_promotion import PromotionError, verify_candidate_policy
 from catalog_qualification import validate_results
-from software_catalog import CatalogError, _locks, load_snapshot
+from software_catalog import CatalogError, _locks, _read, load_snapshot
 
 _HEADS = {
     "agentbot": ("agentbot", "main"),
@@ -26,6 +35,49 @@ _DATA = re.compile(
 )
 _MAX_BLOB = 4_194_304
 _MAX_CATALOG = 33_554_432
+
+
+def load_policy(path):
+    """Read operator-reviewed controller inputs, never executable artifact contents."""
+    policy = decode_json(_read(path, 65_536))
+    if (
+        not isinstance(policy, dict)
+        or not {
+            "schema_version",
+            "identity",
+            "expected_heads",
+            "expected_sources",
+            "required_jobs",
+            "publisher_app_id",
+        }
+        <= set(policy)
+        or not set(policy)
+        <= {
+            "schema_version",
+            "identity",
+            "expected_heads",
+            "expected_sources",
+            "required_jobs",
+            "publisher_app_id",
+            "publisher_app_slug",
+        }
+        or type(policy["schema_version"]) is not int
+        or policy["schema_version"] != 1
+    ):
+        raise CatalogError("publication policy schema mismatch")
+    identity = policy.pop("identity")
+    if not isinstance(identity, dict) or set(identity) != {
+        "repository_id",
+        "workflow_id",
+        "run_id",
+        "attempt",
+        "candidate",
+        "branch",
+        "workflow_revision",
+    }:
+        raise CatalogError("trusted workflow identity schema mismatch")
+    policy.pop("schema_version")
+    return RunIdentity(**identity), policy
 
 
 def _sha(value):
@@ -250,8 +302,36 @@ def read_catalog(api, tree, directory, *, approved):
     return snapshot, files
 
 
-def plan_publication(
-    api, identity, *, expected_heads, expected_sources, required_jobs, publisher_app_id
+def _publisher_origin(api, identity, slug, candidate_commit):
+    if slug is None:
+        return
+    if not isinstance(slug, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", slug):
+        raise CatalogError("trusted publisher App slug is invalid")
+    for suffix in ("", f"/attempts/{identity.attempt}"):
+        actor = _object(
+            _object(api.json(f"{PREFIX}/actions/runs/{identity.run_id}{suffix}")).get("actor")
+        )
+        if actor.get("type") != "Bot" or actor.get("login") != slug + "[bot]":
+            raise CatalogError(
+                "candidate qualification was not initiated by the trusted publisher App"
+            )
+    verification = _object(candidate_commit.get("verification"))
+    if verification.get("verified") is not True or verification.get("reason") != "valid":
+        raise CatalogError(
+            "candidate commit needs a verified signature from trusted App preparation"
+        )
+
+
+def _plan_publication(
+    api,
+    identity,
+    *,
+    expected_heads,
+    expected_sources,
+    required_jobs,
+    publisher_app_id,
+    publisher_app_slug=None,
+    _reviewed_development=None,
 ):
     """Build a data-bound submission plan without changing remote or caller files."""
     if (
@@ -274,7 +354,10 @@ def plan_publication(
         or repository.get("default_branch") != "main"
     ):
         raise CatalogError("publication repository authority differs")
-    if read_heads(api) != expected_heads:
+    live_heads = dict(expected_heads)
+    if _reviewed_development is not None:
+        live_heads["shared-development"] = _sha(_reviewed_development)
+    if read_heads(api) != live_heads:
         raise CatalogError("source or base heads moved")
     validate_candidate_ref(api, identity)
     owner_type = _object(repository.get("owner")).get("type")
@@ -285,6 +368,7 @@ def plan_publication(
     _, base_tree = read_commit_tree(api, main)
     _, development_tree = read_commit_tree(api, development)
     candidate_commit, candidate_tree = read_commit_tree(api, identity.candidate)
+    _publisher_origin(api, identity, publisher_app_slug, candidate_commit)
     _, source_tree = read_commit_tree(api, expected_sources["dotfiles-shared"])
     parents = candidate_commit.get("parents")
     if (
@@ -346,7 +430,7 @@ def plan_publication(
         load_snapshot(candidate.directory)
     validate_run(api.json(f"{PREFIX}/actions/runs/{identity.run_id}"), identity)
     validate_candidate_ref(api, identity)
-    if read_heads(api) != expected_heads:
+    if read_heads(api) != live_heads:
         raise CatalogError("source or base heads moved while collecting evidence")
     if read_protections(api, publisher_app_id, owner_type) != protections:
         raise CatalogError("branch protection changed while collecting evidence")
@@ -377,10 +461,34 @@ def plan_publication(
             "no atomic cross-repository source/base comparison",
         ],
     }
+    if publisher_app_slug is not None:
+        plan["publisher_app_slug"] = publisher_app_slug
+        plan["publisher_app_id"] = publisher_app_id
     plan["transaction_id"] = hashlib.sha256(
         json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
     return plan
+
+
+def plan_publication(
+    api,
+    identity,
+    *,
+    expected_heads,
+    expected_sources,
+    required_jobs,
+    publisher_app_id,
+    publisher_app_slug=None,
+):
+    return _plan_publication(
+        api,
+        identity,
+        expected_heads=expected_heads,
+        expected_sources=expected_sources,
+        required_jobs=required_jobs,
+        publisher_app_id=publisher_app_id,
+        publisher_app_slug=publisher_app_slug,
+    )
 
 
 def publication_status(api, identity, **policy):

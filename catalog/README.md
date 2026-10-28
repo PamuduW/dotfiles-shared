@@ -149,11 +149,38 @@ The repository must already have an approved predecessor and automatic promotion
 enabled through a reviewed change. A missing seed, protection or complete result
 produces `status: held` and `published: false`.
 
-A successful unit fixture produces an immutable plan containing only the two
-approval proof files, bound to candidate content and live heads. It performs no
-remote writes. The App writer, candidate preparer, trusted reusable qualification
-workflow and complete baseline-upgrade evidence are still required; this command
-cannot publish or enable the current unapproved seed.
+A successful plan contains only the two generated approval proof files, bound to
+candidate content and live heads. The status command performs no remote writes.
+
+`python3 scripts/catalog/publish.py REVIEWED-POLICY.json` also defaults to planning.
+An explicit `--execute` submits a development PR using `GH_TOKEN` supplied by the
+trusted App minting job. Execution requires `publisher_app_slug` in the reviewed
+policy, a candidate run initiated by that App, signed candidate and publication
+commits, and an installation token scoped to this repository alone. The token
+does not belong in the policy or command arguments. The writer accepts only
+approval-file tree entries, new transaction references and PR creation; it does
+not update protected refs, change permissions, delete branches or merge PRs.
+
+After the development PR is reviewed and merged, `--development-pr NUMBER`
+plans the corresponding main PR; it still needs `--execute` to submit it. This
+phase checks the actual merge tree, ancestry and current human approvals of the
+exact publication head from reviewers with repository write/admin access. It
+uses the same signed publication branch and identical catalog bytes. A closed,
+retargeted or changed PR, moved source/base, missing review or ambiguous existing
+reference holds publication. Ambiguous create responses are reconciled through
+reads instead of being blindly retried. Main still requires its protected review.
+
+The App needs Contents and Pull requests write access, with Metadata read access,
+restricted to dotfiles-shared. Its trusted minting step establishes App identity;
+the installation-scope endpoint does not report the App ID. Public product source
+refs are read anonymously with a separate process deadline and no inherited
+credentials. There is no atomic GitHub transaction covering all repository heads
+and PR creation: before/after checks detect movement, but may leave a transaction
+branch or PR for inspection. They never repair this by force-pushing or deletion.
+
+The candidate preparer, trusted qualification workflow, complete baseline-upgrade
+evidence, and live App/signing/protection integration still need qualification
+before rollout. Fixture tests and successful smoke runs cannot approve the seed.
 
 Source verification compares the declared Git commit, index and tracked file
 bytes, including executable bits and symlink targets. Hidden tracked edits do
