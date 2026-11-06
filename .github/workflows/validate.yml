@@ -55,7 +55,9 @@ jobs:
       # consumer vendored it and the Python was linted by neither. Both are
       # linted here now, against the same rule selection Agentbot applies.
       - name: Bash syntax
-        run: find scripts tests -name '*.sh' -exec bash -n {} +
+        run: find scripts tests -name '*.sh' -print0 | xargs -0 -r -n 1 bash -n
+      - name: Syntax gate regression
+        run: bash tests/test_syntax_gate.sh
       - name: ShellCheck
         run: shellcheck -x -e SC1091,SC2178,SC2313 $(find scripts tests -name '*.sh')
       - name: Formatting
