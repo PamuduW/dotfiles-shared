@@ -50,31 +50,31 @@ _repo_update_result_init() {
 	local result_name="$1" repo_dir="$2" repo_label="$3"
 	local -n result_ref="$result_name"
 	result_ref=(
-		[dir]="$repo_dir"
-		[label]="$repo_label"
-		[state]=invalid
-		[ahead]=0
-		[behind]=0
-		[dirty]=0
-		[changes]=''
-		[upstream]=''
-		[reason]=''
-		[safe]=0
-		[approved]=0
-		[apply_action]=''
-		[recovery_branch]=''
-		[recovery_stash]=''
-		[outcome]=stopped
+		['dir']="$repo_dir"
+		['label']="$repo_label"
+		['state']=invalid
+		['ahead']=0
+		['behind']=0
+		['dirty']=0
+		['changes']=''
+		['upstream']=''
+		['reason']=''
+		['safe']=0
+		['approved']=0
+		['apply_action']=''
+		['recovery_branch']=''
+		['recovery_stash']=''
+		['outcome']=stopped
 	)
 }
 
 _repo_update_result_stop() {
 	local result_name="$1" state="$2" message="$3"
 	local -n result_ref="$result_name"
-	result_ref[state]="$state"
-	result_ref[reason]="$state"
-	result_ref[safe]=0
-	result_ref[outcome]=stopped
+	result_ref['state']="$state"
+	result_ref['reason']="$state"
+	result_ref['safe']=0
+	result_ref['outcome']=stopped
 	printf '%s\n' "$message" >&2
 	return 1
 }
@@ -147,7 +147,7 @@ repo_update_preflight() {
 		_repo_update_result_stop "$result_name" no-origin 'No origin remote is configured.'
 		return 0
 	}
-	result_ref[origin]="$origin"
+	result_ref['origin']="$origin"
 	if [[ -n "$expected_slug" ]]; then
 		rewrite_rules="$(git config --global --get-regexp '^url\..*\.insteadof$' 2>/dev/null || true)"
 		repo_update_origin_allowed "$origin" "$expected_slug" "$rewrite_rules" || {
@@ -167,13 +167,13 @@ repo_update_preflight() {
 		_repo_update_result_stop "$result_name" non-origin-upstream 'The current branch upstream must use the origin remote.'
 		return 0
 	}
-	result_ref[upstream]="$upstream"
+	result_ref['upstream']="$upstream"
 
-	if ! result_ref[changes]="$(git -C "$repo_dir" status --short --untracked-files=all 2>/dev/null)"; then
+	if ! result_ref['changes']="$(git -C "$repo_dir" status --short --untracked-files=all 2>/dev/null)"; then
 		_repo_update_result_stop "$result_name" status-failed 'Could not inspect local repository changes.'
 		return 0
 	fi
-	[[ -n "${result_ref[changes]}" ]] && result_ref[dirty]=1
+	[[ -n "${result_ref[changes]}" ]] && result_ref['dirty']=1
 
 	if ! fetch_output="$(git -C "$repo_dir" fetch --prune 2>&1)"; then
 		[[ -n "$fetch_output" ]] && _repo_update_print_raw_output "$fetch_output" >&2
@@ -188,32 +188,32 @@ repo_update_preflight() {
 		_repo_update_result_stop "$result_name" invalid 'Could not classify local and upstream history.'
 		return 0
 	}
-	read -r result_ref[ahead] result_ref[behind] <<<"$counts"
+	read -r 'result_ref[ahead]' 'result_ref[behind]' <<<"$counts"
 	if [[ ! "${result_ref[ahead]}" =~ ^[0-9]+$ || ! "${result_ref[behind]}" =~ ^[0-9]+$ ]]; then
 		_repo_update_result_stop "$result_name" invalid-counts 'Git returned invalid ahead/behind counts.'
 		return 0
 	fi
 
 	if ((result_ref[ahead] > 0 && result_ref[behind] > 0)); then
-		result_ref[state]=diverged
+		result_ref['state']=diverged
 	elif ((result_ref[ahead] > 0)); then
-		result_ref[state]=ahead
+		result_ref['state']=ahead
 	elif ((result_ref[behind] > 0)); then
-		result_ref[state]=behind
+		result_ref['state']=behind
 	else
-		result_ref[state]=current
+		result_ref['state']=current
 	fi
 
 	if [[ "${result_ref[dirty]}" == 1 ]]; then
-		result_ref[reason]=dirty
+		result_ref['reason']=dirty
 		return 0
 	fi
 	if [[ "${result_ref[state]}" == diverged ]]; then
-		result_ref[reason]=diverged
+		result_ref['reason']=diverged
 		return 0
 	fi
-	result_ref[reason]="${result_ref[state]}"
-	result_ref[safe]=1
+	result_ref['reason']="${result_ref[state]}"
+	result_ref['safe']=1
 }
 
 _repo_update_change_count_for() {
@@ -329,30 +329,30 @@ repo_update_print_stopped() {
 repo_update_request_approval() {
 	local result_name="$1" confirm_fn="$2" event prompt
 	local -n result_ref="$result_name"
-	result_ref[approved]=0
+	result_ref['approved']=0
 	if [[ "${result_ref[reason]:-}" == dirty || ("${result_ref[dirty]:-0}" == 0 && ("${result_ref[state]:-}" == ahead || "${result_ref[state]:-}" == diverged)) ]]; then
 		event=replace-local
 		prompt="Back up local work and replace it with ${result_ref[upstream]}?"
 		repo_update_print_result "$result_name"
 		repo_update_print_changes "$result_name"
 		if "$confirm_fn" "$event" "$prompt"; then
-			result_ref[approved]=1
-			result_ref[apply_action]=replace
+			result_ref['approved']=1
+			result_ref['apply_action']=replace
 			return 0
 		fi
-		result_ref[reason]=replace-declined
-		result_ref[outcome]=stopped
+		result_ref['reason']=replace-declined
+		result_ref['outcome']=stopped
 		printf '\n\n  %sReplacement declined; update stopped.%s\n' "${C_RED:-}" "${C_RESET:-}"
 		return 1
 	fi
 	if [[ "${result_ref[safe]}" != 1 ]]; then
-		result_ref[outcome]=stopped
+		result_ref['outcome']=stopped
 		return 1
 	fi
 	case "${result_ref[state]}" in
 	current)
-		result_ref[approved]=1
-		result_ref[outcome]=current
+		result_ref['approved']=1
+		result_ref['outcome']=current
 		return 0
 		;;
 	ahead)
@@ -367,12 +367,12 @@ repo_update_request_approval() {
 	esac
 	repo_update_print_result "$result_name"
 	if "$confirm_fn" "$event" "$prompt"; then
-		result_ref[approved]=1
-		[[ "${result_ref[state]}" == ahead ]] && result_ref[outcome]=ahead_continue
+		result_ref['approved']=1
+		[[ "${result_ref[state]}" == ahead ]] && result_ref['outcome']=ahead_continue
 		return 0
 	fi
-	result_ref[reason]="${result_ref[state]}-declined"
-	result_ref[outcome]=stopped
+	result_ref['reason']="${result_ref[state]}-declined"
+	result_ref['outcome']=stopped
 	if [[ "${result_ref[state]}" == behind ]]; then
 		printf '\n\n  %sPull declined; update stopped.%s\n' "${C_RED:-}" "${C_RESET:-}"
 	else
@@ -385,7 +385,7 @@ _repo_update_recovery_branch() {
 	local result_name="$1" timestamp candidate suffix=0
 	local -n result_ref="$result_name"
 	timestamp="$(date -u +%Y%m%d-%H%M%S)" || {
-		result_ref[reason]=recovery-timestamp-failed
+		result_ref['reason']=recovery-timestamp-failed
 		return 1
 	}
 	candidate="recovery/${REPO_UPDATE_RECOVERY_PREFIX}-${timestamp}"
@@ -394,29 +394,29 @@ _repo_update_recovery_branch() {
 		candidate="recovery/${REPO_UPDATE_RECOVERY_PREFIX}-${timestamp}-${suffix}"
 	done
 	if ! git -C "${result_ref[dir]}" branch "$candidate" HEAD; then
-		result_ref[reason]=recovery-branch-failed
+		result_ref['reason']=recovery-branch-failed
 		return 1
 	fi
-	result_ref[recovery_branch]="$candidate"
+	result_ref['recovery_branch']="$candidate"
 }
 
 _repo_update_stash_changes() {
 	local result_name="$1" stash_output='' stash_id message
 	local -n result_ref="$result_name"
 	message="${REPO_UPDATE_RECOVERY_PREFIX} full-update recovery $(date -u +%Y%m%d-%H%M%S)" || {
-		result_ref[reason]=recovery-timestamp-failed
+		result_ref['reason']=recovery-timestamp-failed
 		return 1
 	}
 	if ! stash_output="$(git -C "${result_ref[dir]}" stash push --include-untracked -m "$message" 2>&1)"; then
 		[[ -n "$stash_output" ]] && _repo_update_print_raw_output "$stash_output" >&2
-		result_ref[reason]=stash-failed
+		result_ref['reason']=stash-failed
 		return 1
 	fi
 	stash_id="$(git -C "${result_ref[dir]}" rev-parse --verify refs/stash 2>/dev/null)" || {
-		result_ref[reason]=stash-reference-failed
+		result_ref['reason']=stash-reference-failed
 		return 1
 	}
-	result_ref[recovery_stash]="$stash_id"
+	result_ref['recovery_stash']="$stash_id"
 }
 
 _repo_update_replace_with_upstream() {
@@ -429,20 +429,20 @@ _repo_update_replace_with_upstream() {
 		_repo_update_stash_changes "$result_name" || return 1
 	fi
 	remaining="$(git -C "${result_ref[dir]}" status --short --untracked-files=all 2>/dev/null)" || {
-		result_ref[reason]=status-failed-after-recovery
+		result_ref['reason']=status-failed-after-recovery
 		return 1
 	}
 	if [[ -n "$remaining" ]]; then
-		result_ref[reason]=recovery-incomplete
+		result_ref['reason']=recovery-incomplete
 		return 1
 	fi
 	if ! reset_output="$(git -C "${result_ref[dir]}" reset --hard '@{upstream}' 2>&1)"; then
 		[[ -n "$reset_output" ]] && _repo_update_print_raw_output "$reset_output" >&2
-		result_ref[reason]=reset-failed
+		result_ref['reason']=reset-failed
 		return 1
 	fi
 	[[ -n "$reset_output" ]] && _repo_update_print_fetch_output "$reset_output"
-	result_ref[outcome]=repository_changed
+	result_ref['outcome']=repository_changed
 }
 
 repo_update_print_recovery() {
@@ -458,7 +458,7 @@ repo_update_apply() {
 	local result_name="$1" pull_output=''
 	local -n result_ref="$result_name"
 	[[ "${result_ref[approved]}" == 1 ]] || {
-		result_ref[outcome]=stopped
+		result_ref['outcome']=stopped
 		return 1
 	}
 	if [[ "${result_ref[apply_action]:-}" == replace ]]; then
@@ -466,8 +466,8 @@ repo_update_apply() {
 		return $?
 	fi
 	case "${result_ref[state]}" in
-	current) result_ref[outcome]=current ;;
-	ahead) result_ref[outcome]=ahead_continue ;;
+	current) result_ref['outcome']=current ;;
+	ahead) result_ref['outcome']=ahead_continue ;;
 	behind)
 		if pull_output="$(git -C "${result_ref[dir]}" pull --ff-only 2>&1)"; then
 			# One line, not the diffstat. A fast-forward printed every path it
@@ -480,17 +480,17 @@ repo_update_apply() {
 			# depend on how Git words itself under another locale.
 			printf '  %sFast-forward: %s, %s commit(s)%s\n' \
 				"${C_CYAN:-}" "${result_ref[label]}" "${result_ref[behind]:-0}" "${C_RESET:-}"
-			result_ref[outcome]=repository_changed
+			result_ref['outcome']=repository_changed
 		else
 			[[ -n "$pull_output" ]] && _repo_update_print_raw_output "$pull_output" >&2
 			printf '  Fast-forward pull failed; resolve the repository manually.\n' >&2
-			result_ref[reason]=pull-failed
-			result_ref[outcome]=stopped
+			result_ref['reason']=pull-failed
+			result_ref['outcome']=stopped
 			return 1
 		fi
 		;;
 	*)
-		result_ref[outcome]=stopped
+		result_ref['outcome']=stopped
 		return 1
 		;;
 	esac
