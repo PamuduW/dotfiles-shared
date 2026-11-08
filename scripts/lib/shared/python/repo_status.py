@@ -90,14 +90,14 @@ def check(repo: Path, *, timeout: float = DEFAULT_TIMEOUT_SECONDS, fetch: bool =
     counts_rc, counts = _git(
         repo, "rev-list", "--left-right", "--count", "HEAD...@{upstream}", timeout=timeout
     )
-    ahead = behind = 0
-    if counts_rc == 0 and counts:
-        parts = counts.split()
-        if len(parts) == 2:
-            ahead, behind = int(parts[0]), int(parts[1])
-    elif fetch:
-        # Fetched fine but the count failed, so the answer is not known.
-        fetched = False
+    parts = counts.split()
+    if (
+        counts_rc != 0
+        or len(parts) != 2
+        or any(not part.isascii() or not part.isdecimal() for part in parts)
+    ):
+        return f"{upstream}: unchecked (local history unavailable)|check"
+    ahead, behind = int(parts[0]), int(parts[1])
 
     return classify(upstream=upstream, fetched=fetched, ahead=ahead, behind=behind, asked=fetch)
 

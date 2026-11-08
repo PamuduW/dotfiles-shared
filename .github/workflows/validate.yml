@@ -5,6 +5,8 @@ name: Validate
 # here, then run both consumers against this checkout. A change here that breaks
 # either product fails on this repository, where it was made, rather than on
 # whichever consumer next happened to run.
+# Automatic triggers paused on 2026-11-08 while GitHub Actions billing is locked.
+# To resume, uncomment the triggers below and re-enable the hosted workflow.
 on:
   # This one keeps its push trigger where the two products dropped theirs. Its
   # job is to run BOTH consumers against this checkout, so a break here is a
@@ -15,16 +17,16 @@ on:
   # contract break caught only on main is caught after the merge that
   # introduced it, which is too late to be the early warning this trigger
   # exists to be.
-  push:
-    branches: [main, development]
+  # push:
+  #   branches: [main, development]
   workflow_dispatch:
   # Daily as well, at 10:00 Asia/Colombo (04:30 UTC, which is what cron
   # takes), because the other half of what breaks it is upstream: the
   # runner image, apt, and the versions of shellcheck, shfmt and ruff it ships.
   # A scheduled failure is a known environment change; the same failure found
   # mid-task is a mystery.
-  schedule:
-    - cron: "30 4 * * *"
+  # schedule:
+  #   - cron: "30 4 * * *"
 
 permissions:
   contents: read
